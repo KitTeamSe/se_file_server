@@ -20,12 +20,14 @@ public class AccountContextService implements UserDetailsService {
   @Value("${spring.security.anonymous.pw}")
   private String ANONYMOUS_PW;
 
+  //TODO : 사용자 도메인 작성 후 권한 검사 기능 구현
   @Override
   public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
     Set<GrantedAuthority> temp = new HashSet<>();
     return new User("test", "test", temp);
   }
 
+  //TODO : 사용자 도메인 작성 후 권한 검사 기능 구현
   public UserDetails loadDefaultGroupAuthorities(String groupName) throws UsernameNotFoundException {
     Set<GrantedAuthority> temp = new HashSet<>();
     return new User("test", "test", temp);

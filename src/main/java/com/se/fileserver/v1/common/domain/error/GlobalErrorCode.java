@@ -2,6 +2,7 @@ package com.se.fileserver.v1.common.domain.error;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+//TODO : 에러 컨벤션 확보 필요
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum GlobalErrorCode implements ErrorCode {
 
