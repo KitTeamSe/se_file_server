@@ -19,6 +19,18 @@ spring:
       hibernate:
         show-sql: true
 
+  security:
+    user:
+      name:
+      password:
+    anonymous:
+      id:
+      pw:
+  jwt:
+    secret:
+    default-group:
+    header:
+
 logging:
   level:
     org:
@@ -30,4 +42,8 @@ logging:
 
 se-file-server:
   upload-dir:
-  max-file-size : 500000000
+  #  upload-dir:
+  max-file-size :
+
+se-web-server:
+  file-dash-server-domain:
