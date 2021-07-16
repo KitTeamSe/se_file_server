@@ -1,0 +1,33 @@
+server:
+  port:
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: -1
+      max-request-size: -1
+  datasource:
+    dirver-class-name: com.mysql.cj.jdbc.Driver
+    url:
+    username:
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show-sql: true
+
+logging:
+  level:
+    org:
+      hibernate: info
+    com:
+      se:
+        se_file_server:
+          file: debug
+
+se-file-server:
+  upload-dir:
+  max-file-size : 500000000
