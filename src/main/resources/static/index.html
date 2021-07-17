@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+<form action="../file/upload/uploadFile" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <input type="file" name="file" id="file">
+  <input type="submit" name="submit" value="단일 파일 업로드">
+</form>
+
+<form action="../file/upload/uploadMultipleFiles" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <input multiple type="file" name="files" id="files">
+  <input type="submit" name="submit" value="복수 파일 업로드">
+</form>
+<br> 테스트 페이지에서는 파일 삭제 클릭 후 URL에서 ? 삭제해야 동작함  </br>
+<form action="../file/delete/" method="get" accept-charset="UTF-8">
+  <input type="text" name="fileName"/>
+  <input type="submit" value="파일 삭제">
+</form>
+</body>
+</html>
