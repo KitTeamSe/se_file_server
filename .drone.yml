@@ -1,0 +1,44 @@
+steps:
+  - name: build
+    image: se-api
+    settings:
+      restore: true
+    volumes:
+      - .:/app
+    resources:
+      requests:
+        cpu: 2000
+      limits:
+        cpu: 2000
+        memory: 2048MiB
+    commands:
+      - java -jar /run-se-file-server.jar --spring.config.location=./application.yml
+
+  - name: mysql
+    image: mysql:5.7.33
+    settings:
+      restore: true
+    resources:
+      requests:
+        cpu: 2000
+      limits:
+        cpu: 2000
+        memory: 2048MiB
+    commands:
+      - java -jar /run-se-file-server.jar --spring.config.location=./application.yml
+
+  - name: test
+    image: se-api
+    settings:
+      restore: true
+    volumes:
+      - .:/app
+    resources:
+      requests:
+        cpu: 2000
+      limits:
+        cpu: 2000
+        memory: 2048MiB
+    commands:
+      - chmod +x gradlew
+      - ./gradlew test
