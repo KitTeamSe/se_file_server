@@ -16,7 +16,6 @@ steps:
       - chmod +x gradlew
       - ./gradlew build test
     depends_on:
-      - build
       - mysql-db
 
 services:
