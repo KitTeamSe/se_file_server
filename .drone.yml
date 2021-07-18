@@ -1,3 +1,7 @@
+kind: pipeline
+type: docker
+name: cicd
+
 steps:
   - name: build
     image: se-api
