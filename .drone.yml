@@ -5,15 +5,18 @@ name: cicd
 steps:
   - name: build
     image: openjdk:11
+    build: .
     resources:
       requests:
         cpu: 2000
       limits:
         cpu: 2000
         memory: 2048MiB
+    commands:
+      - ./gradlew build
 
   - name: test
-    image: se-api
+    image: openjdk:11
     settings:
       restore: true
     resources:
@@ -23,7 +26,6 @@ steps:
         cpu: 2000
         memory: 2048MiB
     commands:
-      - chmod +x gradlew
       - ./gradlew test
     depends_on:
       - build
