@@ -12,10 +12,8 @@ services:
       - 8074:8074
     depends_on:
       - mysql-db
-    networks:
-      - mysql-network
     command: |
-      sh -c "./wait-for-it.sh mysql:3306 --
+      sh -c "./wait-for-it.sh localhost:3306 --
              java -jar /run-se-file-server.jar --spring.config.location=./application.yml"
 
   mysql-db:
@@ -29,9 +27,5 @@ services:
       - .:/app
     ports:
       - 3306:3306
-    networks:
-      - mysql-network
     platform: linux/x86_64 # for m1
 
-networks:
-  mysql-network:
