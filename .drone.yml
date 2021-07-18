@@ -3,8 +3,6 @@ steps:
     image: se-api
     settings:
       restore: true
-    volumes:
-      - .:/app
     resources:
       requests:
         cpu: 2000
@@ -31,8 +29,6 @@ steps:
     image: se-api
     settings:
       restore: true
-    volumes:
-      - .:/app
     resources:
       requests:
         cpu: 2000
