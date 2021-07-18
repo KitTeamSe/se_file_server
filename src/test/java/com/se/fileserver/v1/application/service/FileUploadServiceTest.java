@@ -1,5 +1,10 @@
 package com.se.fileserver.v1.application.service;
 
+import org.junit.jupiter.api.Test;
+
 public class FileUploadServiceTest {
-  // TODO: 파일 태스크 - 테스트
+    @Test
+    public void simpleTest(){
+        System.out.println("success");
+    }
 }
