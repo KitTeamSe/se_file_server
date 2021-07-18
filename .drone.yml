@@ -11,10 +11,6 @@ steps:
       limits:
         cpu: 2000
         memory: 2048MiB
-    commands:
-      - java -jar /run-se-file-server.jar --spring.config.location=./application.yml
-    depends_on:
-      - mysql-db
 
   - name: test
     image: se-api
