@@ -4,9 +4,7 @@ name: cicd
 
 steps:
   - name: build
-    image: se-api
-    settings:
-      restore: true
+    image: openjdk:11
     resources:
       requests:
         cpu: 2000
@@ -15,19 +13,8 @@ steps:
         memory: 2048MiB
     commands:
       - java -jar /run-se-file-server.jar --spring.config.location=./application.yml
-
-  - name: mysql
-    image: mysql:5.7.33
-    settings:
-      restore: true
-    resources:
-      requests:
-        cpu: 2000
-      limits:
-        cpu: 2000
-        memory: 2048MiB
-    commands:
-      - java -jar /run-se-file-server.jar --spring.config.location=./application.yml
+    depends_on:
+      - mysql-db
 
   - name: test
     image: se-api
@@ -42,3 +29,22 @@ steps:
     commands:
       - chmod +x gradlew
       - ./gradlew test
+
+services:
+  - name: mysql-db
+    image: mysql:5.7.33
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    resources:
+      requests:
+        cpu: 1000
+        memory: 1024MiB
+      limits:
+        cpu: 1000
+        memory: 1024MiB
+    ports:
+      - 3306
+
