@@ -3,7 +3,7 @@ type: docker
 name: cicd
 
 steps:
-  - name: build
+  - name: build & test
     image: openjdk:11
     build: .
     resources:
@@ -14,21 +14,7 @@ steps:
         memory: 2048MiB
     commands:
       - chmod +x gradlew
-      - ./gradlew build
-
-  - name: test
-    image: openjdk:11
-    settings:
-      restore: true
-    resources:
-      requests:
-        cpu: 2000
-      limits:
-        cpu: 2000
-        memory: 2048MiB
-    commands:
-      - chmod +x gradlew
-      - ./gradlew test
+      - ./gradlew build test
     depends_on:
       - build
       - mysql-db
