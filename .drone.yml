@@ -25,6 +25,9 @@ steps:
     commands:
       - chmod +x gradlew
       - ./gradlew test
+    depends_on:
+      - build
+      - mysql-db
 
 services:
   - name: mysql-db
