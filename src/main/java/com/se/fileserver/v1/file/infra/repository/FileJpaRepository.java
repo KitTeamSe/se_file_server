@@ -1,6 +1,10 @@
 package com.se.fileserver.v1.file.infra.repository;
 
-// JPA Repo는 Interface라서 class가 아닌 interface로 고쳐야 합니다.
-public class FileJpaRepository {
+import com.se.fileserver.v1.file.domain.model.File;
+import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+
+public interface FileJpaRepository extends JpaRepository<File,Long>, FileRepositoryProtocol {
   // TODO: 파일 태스크
 }
