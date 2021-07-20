@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FileJpaRepository extends JpaRepository<File,Long>, FileRepositoryProtocol {
   // TODO: 파일 태스크
+  File findBySaveName(String fileName);
 }

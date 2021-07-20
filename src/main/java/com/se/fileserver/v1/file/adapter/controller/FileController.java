@@ -1,16 +1,55 @@
 package com.se.fileserver.v1.file.adapter.controller;
 
+import com.se.fileserver.v1.common.domain.exception.BusinessException;
+import com.se.fileserver.v1.file.application.dto.FileDownloadVo;
+import com.se.fileserver.v1.file.application.dto.FileDto;
+import com.se.fileserver.v1.file.application.service.FileDownloadService;
+import com.se.fileserver.v1.file.application.service.error.FileErrorCode;
+import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 @RequestMapping("/file-server/v1/")
 public class FileController {
-
   // TODO: 파일 태스크
+  private final FileDownloadService fileDownloadService;
+
+  public FileController(FileDownloadService fileDownloadService) {
+    this.fileDownloadService = fileDownloadService;
+  }
+
   // 파일 업로드
 
   // 파일 멀티 업로드 (파일 업로드 모듈 사용)
 
-  // 파일 다운로드 (url return해주기)
+  // 파일 다운로드
+  @GetMapping("/{saveName:.+}")
+  @ApiOperation(value = "파일 다운로드", notes = "파일 서버에 저장된 파일을 다운로드한다.")
+  public ResponseEntity<Resource> downloadFile(@PathVariable String saveName) {
+    // Load file as Resource
+    FileDownloadVo fileDownloadVo = fileDownloadService.downloadFile(saveName);
+
+    if (fileDownloadVo == null) {
+      throw new BusinessException(FileErrorCode.FILE_DOES_NOT_EXISTS);
+    }
+
+    return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(fileDownloadVo.getFileType()))
+        .header(
+            HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDownloadVo.getOriginalName() + "\"")
+        .body(fileDownloadVo.getResource());
+  }
 
   // 파일 삭제
 
