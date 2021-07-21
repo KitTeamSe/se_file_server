@@ -84,5 +84,4 @@ public class File extends BaseEntity {
   public Long getSize() {
     return size;
   }
-
 }
