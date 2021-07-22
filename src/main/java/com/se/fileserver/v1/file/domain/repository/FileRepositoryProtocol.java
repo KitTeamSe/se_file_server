@@ -1,9 +1,12 @@
 package com.se.fileserver.v1.file.domain.repository;
 
 import com.se.fileserver.v1.file.domain.model.File;
+import org.springframework.stereotype.Repository;
 
-public interface FileRepositoryProtocol{
-    // 주입 ?
-  // TODO: 파일 태스크
-  //void delete(File file); Service에서 불러올 것을 이부분에서 정의
+@Repository
+public interface FileRepositoryProtocol {
+
+  File findBySaveName(String saveName);
+
+  void delete(File entity);
 }
