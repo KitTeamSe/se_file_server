@@ -3,10 +3,10 @@ package com.se.fileserver.v1.file.adapter.controller;
 import com.se.fileserver.v1.common.application.dto.SuccessResponse;
 import com.se.fileserver.v1.file.application.service.FileUploadService;
 import com.se.fileserver.v1.file.domain.model.File;
-import com.se.fileserver.v1.file.infra.dto.FileDto;
-import com.se.fileserver.v1.file.infra.dto.FileDto.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileApiController {
 
   private final FileUploadService fileUploadService;
-
   public FileApiController(
       FileUploadService fileUploadService) {
     this.fileUploadService = fileUploadService;
@@ -34,14 +33,14 @@ public class FileApiController {
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "파일 업로드 성공", fileUploadService.upload(file, service));
   }
 
-  // 파일 멀티 업로드 (파일 업로드 모듈 사용)
-//  @PostMapping("/files")
-//  public SuccessResponse uploadMultiFile(@RequestBody List<FileDto.Request> request) {
-//    return new SuccessResponse(HttpStatus.OK.value(), "멀티 파일 업로드 성공", fileUploadService.multiUpload(request));
-//  }
+  @ApiOperation("파일 멀티 업로드")
+  @PostMapping("/files")
+  @ResponseStatus(value = HttpStatus.CREATED)
+  public List<SuccessResponse<File>> uploadFiles(@RequestParam(value = "file") List<MultipartFile> files, @RequestParam String service) {
+    return files.stream()
+        .map(file -> new SuccessResponse<>(HttpStatus.CREATED.value(), "파일 업로드 성공", fileUploadService.upload(file,service)))
+        .collect(Collectors.toList());
+  }
 
-  // 파일 다운로드 (url return해주기)
-
-  // 파일 삭제
 
 }

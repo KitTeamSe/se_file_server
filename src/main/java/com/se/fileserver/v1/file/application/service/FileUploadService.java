@@ -36,14 +36,27 @@ public class FileUploadService {
   @Transactional
   public File upload(MultipartFile file, String service) {
 
+    Path targetLocation = this.fileLocation;
+    try {
+      Files.createDirectories(targetLocation.resolve(service));
+      targetLocation = targetLocation.resolve(service);
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("디렉토리 생성 오류");
+    }
+
     if (!isValidFile(file))
-      throw new FileUploadException("유효하지 않은 파일명");
+      throw new FileUploadException("업로드할 파일명이 유효하지 않음");
 
     String fileType = getExtension(file);
-    String saveName = createSaveName() +"."+ fileType;
-    String downloadUri = createDownloadUri(saveName);
     String originalName = file.getOriginalFilename();
     Long size = file.getSize();
+    String saveName;
+    do {
+      saveName = createSaveName(fileType);
+      System.out.println(saveName);
+    } while (isSameFileNameExists(targetLocation.resolve(saveName)));
+    String downloadUri = createDownloadUri(saveName);
 
     File newFile = new File(
         downloadUri,
@@ -54,11 +67,10 @@ public class FileUploadService {
         size
     );
 
-    System.out.println("새로운 파일 생성 ");
-
-    Path targetLocation = this.fileLocation.resolve(service).resolve(saveName);
+    System.out.print("새로운 파일 생성, ");
+    targetLocation = targetLocation.resolve(saveName);
     System.out.println(targetLocation.toString());
-    System.out.println(newFile.getService());
+    System.out.println("service : " + newFile.getService());
     fileRepository.save(newFile);
     storeFile(file, targetLocation);
 
@@ -67,8 +79,8 @@ public class FileUploadService {
 
   /* 유효성 검증 : 파일명, 파일 크기 */
   public boolean isValidFile(MultipartFile file) {
-    // file : user upload dir, 즉 요청된 파일의 .절대경로를 가져오는 것
     String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+    // TODO : error convention
     if (file == null)
       throw new FileUploadException("파일을 가져오지 못함 ");
     if (fileName.contains(".."))
@@ -97,9 +109,10 @@ public class FileUploadService {
         .toUriString();
   }
 
-  /* saveName : UUID 생성 */
-  private String createSaveName() {
-    return UUID.randomUUID().toString().replace("-", "");
+  /* saveName : UUID.확장자 생성 */
+  private String createSaveName(String fileType) {
+    return UUID.randomUUID().toString().replace("-", "")
+        +"."+fileType;
   }
 
   /* 확장자 추출 */
