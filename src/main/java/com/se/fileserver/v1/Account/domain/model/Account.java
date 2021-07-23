@@ -1,4 +1,4 @@
-package com.se.fileserver.v1.user.domain.model;
+package com.se.fileserver.v1.Account.domain.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="USER")
-public class UserVO {
+public class Account {
 
   @Id
   @Column(name ="USER_ID")
@@ -15,10 +15,10 @@ public class UserVO {
   private String password;
   private String auth;
 
-  public UserVO() {
+  public Account() {
   }
 
-  public UserVO(String id, String password, String auth) {
+  public Account(String id, String password, String auth) {
     this.id = id;
     this.password = password;
     this.auth = auth;

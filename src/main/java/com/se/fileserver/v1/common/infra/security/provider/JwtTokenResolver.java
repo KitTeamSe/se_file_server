@@ -1,8 +1,8 @@
 package com.se.fileserver.v1.common.infra.security.provider;
 
-import com.se.fileserver.v1.common.application.service.AccountContextService;
 import com.se.fileserver.v1.common.domain.error.GlobalErrorCode;
 import com.se.fileserver.v1.common.domain.exception.BusinessException;
+import com.se.fileserver.v1.Account.application.service.UserCustomApplicationService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -22,7 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenResolver {
 
-  private final AccountContextService accountContextService;
+  //private final AccountContextService accountContextService;
+  private final UserCustomApplicationService userCustomApplicationService;
 
   @Value("${spring.jwt.header}")
   private String AUTH_HEADER;
@@ -36,9 +37,15 @@ public class JwtTokenResolver {
   private final Long tokenExpirePeriod = 1000L * 60 * 60 * 2;   // 2시간
 
   @Autowired
+  public JwtTokenResolver(
+      UserCustomApplicationService userCustomApplicationService) {
+    this.userCustomApplicationService = userCustomApplicationService;
+  }
+
+  /*@Autowired
   public JwtTokenResolver(AccountContextService accountContextService) {
     this.accountContextService = accountContextService;
-  }
+  }*/
 
   @PostConstruct
   protected void init() {
@@ -46,7 +53,7 @@ public class JwtTokenResolver {
   }
 
   public Authentication getAuthentication(String token) {
-    UserDetails userDetails = accountContextService.loadUserByUsername(getUserId(token));
+    UserDetails userDetails = userCustomApplicationService.loadUserByUsername(getUserId(token));
     return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
 
@@ -86,7 +93,7 @@ public class JwtTokenResolver {
   }
 
   public Authentication getDefaultAuthentication() {
-    UserDetails userDetails = accountContextService.loadDefaultGroupAuthorities(defaultGroup);
+    UserDetails userDetails = userCustomApplicationService.loadDefaultGroupAuthorities(defaultGroup);
     return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
 }

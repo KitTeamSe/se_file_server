@@ -39,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .authorizeRequests()
         .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll()
-        .antMatchers("/loginTest/**").hasAnyAuthority(Role.user.getCode()).anyRequest().authenticated()
+        .antMatchers("/loginTest/success/**").hasAnyAuthority("ROLE_ADMIN").anyRequest().authenticated()
         .and()
         .addFilterBefore(new JwtAuthenticationFilters(jwtTokenResolver), UsernamePasswordAuthenticationFilter.class);
   }

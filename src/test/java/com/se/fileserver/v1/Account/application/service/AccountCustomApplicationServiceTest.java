@@ -1,18 +1,16 @@
-package com.se.fileserver.v1.user.application.service;
+package com.se.fileserver.v1.Account.application.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.se.fileserver.v1.user.infra.repository.UserJpaRepository;
+import com.se.fileserver.v1.Account.infra.repository.AccountJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @SpringBootTest
-class UserCustomApplicationServiceTest {
+class AccountCustomApplicationServiceTest {
 
   @Autowired
-  UserJpaRepository userJpaRepository;
+  AccountJpaRepository accountJpaRepository;
 
   @Autowired
   UserCustomApplicationService userCustomApplicationService;
