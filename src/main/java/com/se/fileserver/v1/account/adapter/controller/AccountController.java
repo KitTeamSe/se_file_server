@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/file-server/v1")
 @Api(tags = "사용자 관리")
 public class AccountController {
-  private final AccountSignInService accountSignInService;
+  private final AccountSignInService accountSignInService;  //
 
   @Autowired
   public AccountController(
