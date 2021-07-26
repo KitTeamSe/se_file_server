@@ -1,6 +1,6 @@
 package com.se.fileserver.v1.common.infra.security.provider;
 
-import com.se.fileserver.v1.common.application.service.AccountContextService;
+import com.se.fileserver.v1.account.application.service.AccountContextService;
 import com.se.fileserver.v1.common.domain.error.GlobalErrorCode;
 import com.se.fileserver.v1.common.domain.exception.BusinessException;
 import io.jsonwebtoken.Claims;
@@ -83,10 +83,5 @@ public class JwtTokenResolver {
         .setExpiration(new Date(now.getTime() + tokenExpirePeriod))
         .signWith(SignatureAlgorithm.HS256, securityKey)
         .compact();
-  }
-
-  public Authentication getDefaultAuthentication() {
-    UserDetails userDetails = accountContextService.loadDefaultGroupAuthorities(defaultGroup);
-    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
 }

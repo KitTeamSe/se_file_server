@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Datasource {
+public class AccountDatasource {
   @Value("${spring.datasource.admin.id}")
   private String id;
   @Value("${spring.datasource.admin.password}")

@@ -2,7 +2,7 @@ package com.se.fileserver.v1.account.infra.repository;
 
 import com.se.fileserver.v1.account.domain.model.Account;
 import com.se.fileserver.v1.account.domain.repository.AccountRepositoryProtocol;
-import com.se.fileserver.v1.account.infra.Datasource;
+import com.se.fileserver.v1.account.infra.AccountDatasource;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AccountDatasourceRepository implements AccountRepositoryProtocol {
 
-  protected final Datasource datasource;
+  protected final AccountDatasource datasource;
 
   @Autowired
-  public AccountDatasourceRepository(Datasource datasource) {
+  public AccountDatasourceRepository(AccountDatasource datasource) {
     this.datasource = datasource;
   }
 

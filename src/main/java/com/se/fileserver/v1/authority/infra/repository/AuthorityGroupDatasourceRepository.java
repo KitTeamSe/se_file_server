@@ -3,7 +3,7 @@ package com.se.fileserver.v1.authority.infra.repository;
 import com.se.fileserver.v1.authority.domain.model.AuthorityGroup;
 import com.se.fileserver.v1.authority.domain.model.AuthorityGroupType;
 import com.se.fileserver.v1.authority.domain.repository.AuthorityGroupRepositoryProtocol;
-import com.se.fileserver.v1.authority.infra.Datasource;
+import com.se.fileserver.v1.authority.infra.AuthorityDatasource;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Repository;
 @Primary
 @Repository
 public class AuthorityGroupDatasourceRepository implements AuthorityGroupRepositoryProtocol {
-  private final Datasource datasource;
+  private final AuthorityDatasource datasource;
 
   @Autowired
   public AuthorityGroupDatasourceRepository(
-      Datasource datasource) {
+      AuthorityDatasource datasource) {
     this.datasource = datasource;
   }
 
