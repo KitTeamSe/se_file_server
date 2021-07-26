@@ -1,7 +1,8 @@
 package com.se.fileserver.v1.account.adapter.controller;
 
 import com.se.fileserver.v1.account.application.dto.AccountInfoDto;
-import com.se.fileserver.v1.account.application.dto.common.Response;
+import com.se.fileserver.v1.account.application.dto.AccountSignInDto;
+import com.se.fileserver.v1.common.application.dto.Response;
 import com.se.fileserver.v1.account.application.dto.request.AccountRequest;
 import com.se.fileserver.v1.account.application.service.AccountSignInService;
 import io.swagger.annotations.Api;
@@ -31,9 +32,10 @@ public class AccountController {
   @PostMapping(value = "/account/signin")
   @ResponseStatus(code = HttpStatus.OK)
   @ApiOperation(value = "로그인")
-  public Response<Void> singIn(@RequestBody @Validated AccountRequest<AccountInfoDto> request, HttpServletRequest httpServletRequest){
+  public Response<String> singIn(@RequestBody @Validated AccountRequest<AccountSignInDto> request,
+      HttpServletRequest httpServletRequest){
     String token = accountSignInService.signIn(request.getDto(), getIp(httpServletRequest));
-    return new Response.Builder<String>().status(HttpStatus.OK.value()).code("SR01").data(token).build();
+    return new Response<>(HttpStatus.OK.value(), "성공적으로 로그인 되었습니다.", token);
   }
 
   private String getIp(HttpServletRequest httpServletRequest){

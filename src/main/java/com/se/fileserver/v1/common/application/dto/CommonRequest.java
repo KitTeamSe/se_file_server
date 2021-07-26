@@ -1,4 +1,4 @@
-package com.se.fileserver.v1.account.application.dto.common;
+package com.se.fileserver.v1.common.application.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 

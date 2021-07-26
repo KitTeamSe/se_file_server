@@ -1,6 +1,6 @@
 package com.se.fileserver.v1.account.application.service;
 
-import com.se.fileserver.v1.account.application.dto.AccountInfoDto;
+import com.se.fileserver.v1.account.application.dto.AccountSignInDto;
 import com.se.fileserver.v1.account.domain.model.Account;
 import com.se.fileserver.v1.account.domain.repository.AccountRepositoryProtocol;
 import com.se.fileserver.v1.common.infra.security.provider.JwtTokenResolver;
@@ -26,9 +26,9 @@ public class AccountSignInService {
   }
 
   @Transactional
-  public String signIn(AccountInfoDto accountInfoMetadata, String ip){
-    Account account = accountRepository.findByIdString(accountInfoMetadata.getId()).orElseThrow(/*error*/);
-    if(account.isMatch(accountInfoMetadata.getPassword())){
+  public String signIn(AccountSignInDto accountSignInDto, String ip){
+    Account account = accountRepository.findByIdString(accountSignInDto.getId()).orElseThrow(/*error*/);
+    if(account.isMatch(accountSignInDto.getPassword())){
 //     throw error
     }
     String token = jwtTokenResolver.createToken(String.valueOf(account.getIdString()));

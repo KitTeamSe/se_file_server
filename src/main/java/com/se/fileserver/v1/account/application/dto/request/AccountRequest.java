@@ -1,6 +1,6 @@
 package com.se.fileserver.v1.account.application.dto.request;
 
-import com.se.fileserver.v1.account.application.dto.common.CommonRequest;
+import com.se.fileserver.v1.common.application.dto.CommonRequest;
 
 public class AccountRequest<T> extends CommonRequest<T> {
   /*

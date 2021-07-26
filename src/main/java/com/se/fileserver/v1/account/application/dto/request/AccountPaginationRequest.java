@@ -1,7 +1,6 @@
 package com.se.fileserver.v1.account.application.dto.request;
 
-import com.se.fileserver.v1.account.application.dto.common.PaginationRequest;
-import io.swagger.annotations.ApiModelProperty;
+import com.se.fileserver.v1.common.application.dto.PaginationRequest;
 import org.springframework.data.domain.Sort.Direction;
 
 public class AccountPaginationRequest<T> extends PaginationRequest<T> {

@@ -1,22 +1,17 @@
 package com.se.fileserver.v1.account.application.dto;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccountSignInDto {
-  private String idString;
+  private String id;
   private String password;
 
-  public AccountSignInDto() {
-  }
-
-  public AccountSignInDto(String idString, String password) {
-    this.idString = idString;
+  public AccountSignInDto(String id, String password) {
+    this.id = id;
     this.password = password;
-  }
-
-  public String getIdString() {
-    return idString;
-  }
-
-  public String getPassword() {
-    return password;
   }
 }
