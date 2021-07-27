@@ -4,12 +4,15 @@ import com.se.fileserver.v1.account.domain.model.Account;
 import com.se.fileserver.v1.account.domain.repository.AccountRepositoryProtocol;
 import com.se.fileserver.v1.authority.domain.model.AuthorityGroup;
 import com.se.fileserver.v1.authority.domain.repository.AuthorityGroupRepositoryProtocol;
+import com.se.fileserver.v1.common.domain.exception.BadRequestException;
+import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,10 +48,10 @@ public class AccountContextService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String idString) throws UsernameNotFoundException {
     Account account = accountRepositoryProtocol.findByIdString(idString)
-        .orElseThrow(() -> new RuntimeException(""));
+        .orElseThrow(() -> new NotFoundException("Account not found."));
 
     AuthorityGroup grantedAuthorityGroup = authorityGroupRepositoryProtocol.findByAccountIdString(idString)
-        .orElseThrow(() -> new RuntimeException(""));
+        .orElseThrow(() -> new NotFoundException("Authority not found."));
 
     Set<GrantedAuthority> grantedAuthority = new HashSet<>(Collections.singletonList(grantedAuthorityGroup));
     return new User(account.getIdString(), account.getPassword(), grantedAuthority);
@@ -70,7 +73,7 @@ public class AccountContextService implements UserDetailsService {
 
   public Account getContextAccount(){
     return accountRepositoryProtocol.findByIdString(getCurrentAccountIdString())
-        .orElseThrow(() -> new RuntimeException(""));
+        .orElseThrow(() -> new NotFoundException("Account not found."));
   }
 
   public String getCurrentAccountIdString(){
