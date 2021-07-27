@@ -1,8 +1,8 @@
-package com.se.fileserver.v1.account.adapter.controller;
+package com.se.fileserver.v1.account.presentation.controller;
 
-import com.se.fileserver.v1.account.application.dto.AccountInfoDto;
 import com.se.fileserver.v1.account.application.dto.AccountSignInDto;
-import com.se.fileserver.v1.common.application.dto.Response;
+import com.se.fileserver.v1.account.presentation.presenter.AccountPresenter;
+import com.se.fileserver.v1.common.presentation.response.Response;
 import com.se.fileserver.v1.account.application.dto.request.AccountRequest;
 import com.se.fileserver.v1.account.application.service.AccountSignInService;
 import io.swagger.annotations.Api;
@@ -21,12 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/file-server/v1")
 @Api(tags = "사용자 관리")
 public class AccountController {
-  private final AccountSignInService accountSignInService;  //
+  private final AccountSignInService accountSignInService;
+  private final AccountPresenter accountPresenter;
 
   @Autowired
   public AccountController(
-      AccountSignInService accountSignInService) {
+      AccountSignInService accountSignInService,
+      AccountPresenter accountPresenter) {
     this.accountSignInService = accountSignInService;
+    this.accountPresenter = accountPresenter;
   }
 
   @PostMapping(value = "/account/signin")
@@ -35,7 +38,7 @@ public class AccountController {
   public Response<String> singIn(@RequestBody @Validated AccountRequest<AccountSignInDto> request,
       HttpServletRequest httpServletRequest){
     String token = accountSignInService.signIn(request.getDto(), getIp(httpServletRequest));
-    return new Response<>(HttpStatus.OK.value(), "성공적으로 로그인 되었습니다.", token);
+    return accountPresenter.signIn(token);
   }
 
   private String getIp(HttpServletRequest httpServletRequest){
