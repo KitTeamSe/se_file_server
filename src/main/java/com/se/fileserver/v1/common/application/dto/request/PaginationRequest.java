@@ -17,17 +17,17 @@ public class PaginationRequest<T> extends BaseRequest<T> {
   @ApiModelProperty(example = "ASC", notes = "정렬 방향")
   private Sort.Direction direction;
   @ApiModelProperty(example = "id", notes = "정렬 기준")
-  private String props;
+  private String orderBy;
 
   public PaginationRequest() {
   }
 
   public PaginationRequest(T dto, int page, int size,
-      Direction direction, String props) {
+      Direction direction, String orderBy) {
     super(dto);
     this.page = page;
     this.size = size;
     this.direction = direction;
-    this.props = props;
+    this.orderBy = orderBy;
   }
 }
