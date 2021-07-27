@@ -1,8 +1,8 @@
 package com.se.fileserver.v1.account.application.dto.request;
 
-import com.se.fileserver.v1.common.application.dto.CommonRequest;
+import com.se.fileserver.v1.common.application.dto.request.BaseRequest;
 
-public class AccountRequest<T> extends CommonRequest<T> {
+public class AccountRequest<T> extends BaseRequest<T> {
   /*
   additional field
   * */
