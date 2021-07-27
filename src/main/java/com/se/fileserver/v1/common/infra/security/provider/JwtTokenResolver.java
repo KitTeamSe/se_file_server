@@ -84,4 +84,9 @@ public class JwtTokenResolver {
         .signWith(SignatureAlgorithm.HS256, securityKey)
         .compact();
   }
+
+  public Authentication getDefaultAuthentication() {
+    UserDetails userDetails = accountContextService.loadDefaultGroupAuthorities(defaultGroup);
+    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+  }
 }

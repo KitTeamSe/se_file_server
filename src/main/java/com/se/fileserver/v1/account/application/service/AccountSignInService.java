@@ -28,7 +28,7 @@ public class AccountSignInService {
   @Transactional
   public String signIn(AccountSignInDto accountSignInDto, String ip){
     Account account = accountRepository.findByIdString(accountSignInDto.getId()).orElseThrow(/*error*/);
-    if(account.isMatch(accountSignInDto.getPassword())){
+    if(!account.isMatch(accountSignInDto.getPassword())){
 //     throw error
     }
     String token = jwtTokenResolver.createToken(String.valueOf(account.getIdString()));
