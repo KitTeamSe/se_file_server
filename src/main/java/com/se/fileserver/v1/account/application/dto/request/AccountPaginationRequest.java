@@ -10,7 +10,7 @@ public class AccountPaginationRequest<T> extends PaginationRequest<T> {
   public AccountPaginationRequest() {}
 
   public AccountPaginationRequest(T dto, int page, int size,
-      Direction direction, String props) {
-    super(dto, page, size, direction, props);
+      Direction direction, String orderBy) {
+    super(dto, page, size, direction, orderBy);
   }
 }

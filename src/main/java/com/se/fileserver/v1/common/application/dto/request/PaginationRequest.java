@@ -3,6 +3,7 @@ package com.se.fileserver.v1.common.application.dto.request;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Min;
 import lombok.Getter;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
@@ -29,5 +30,9 @@ public class PaginationRequest<T> extends BaseRequest<T> {
     this.size = size;
     this.direction = direction;
     this.orderBy = orderBy;
+  }
+
+  public PageRequest of(){
+    return PageRequest.of(this.page,this.size, this.direction, this.orderBy);
   }
 }
