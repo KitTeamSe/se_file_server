@@ -12,8 +12,4 @@ public class FileserverApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FileserverApplication.class, args);
 	}
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-	}
 }

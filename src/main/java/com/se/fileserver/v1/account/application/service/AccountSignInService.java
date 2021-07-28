@@ -4,7 +4,6 @@ import com.se.fileserver.v1.account.application.dto.AccountSignInDto;
 import com.se.fileserver.v1.account.domain.model.Account;
 import com.se.fileserver.v1.account.domain.repository.AccountRepositoryProtocol;
 import com.se.fileserver.v1.common.domain.exception.BadRequestException;
-import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.common.infra.security.provider.JwtTokenResolver;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class AccountSignInService {
   @Transactional
   public String signIn(AccountSignInDto accountSignInDto, String ip){
     Account account = accountRepository.findByIdString(accountSignInDto.getId()).orElseThrow(() -> new BadRequestException("Account not found."));
-    if(!account.isMatch(accountSignInDto.getPassword())){
+    if(!account.isMatch(passwordEncoder, accountSignInDto.getPassword())){
       throw new BadRequestException("The password is incorrect.");
     }
     String token = jwtTokenResolver.createToken(String.valueOf(account.getIdString()));
