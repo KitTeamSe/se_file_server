@@ -7,8 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class File extends BaseEntity {
   // TODO: 파일 태스크
   // 저장 디렉토리 -> c:/file/se/
@@ -55,34 +57,4 @@ public class File extends BaseEntity {
     this.saveName = saveName;
     this.size = size;
   }
-
-  /* getter */
-  public Long getId() {
-    return id;
-  }
-
-  public String getDownloadUrl() {
-    return downloadUrl;
-  }
-
-  public String getService() {
-    return service;
-  }
-
-  public String getFileType() {
-    return fileType;
-  }
-
-  public String getOriginalName() {
-    return originalName;
-  }
-
-  public String getSaveName() {
-    return saveName;
-  }
-
-  public Long getSize() {
-    return size;
-  }
-
 }
