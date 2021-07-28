@@ -1,7 +1,6 @@
 package com.se.fileserver.v1.file.application.service;
 
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
-import com.se.fileserver.v1.config.FileProperties;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
@@ -10,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -21,9 +21,9 @@ public class FileDownloadService {
 
   private final FileRepositoryProtocol fileRepositoryProtocol;
 
-  public FileDownloadService(FileProperties prop,
+  public FileDownloadService(@Value("se-file-server.upload-dir") String directory,
       FileRepositoryProtocol fileRepositoryProtocol) {
-    this.fileLocation = Paths.get(prop.getUploadDir()).toAbsolutePath().normalize();
+    this.fileLocation = Paths.get(directory).toAbsolutePath().normalize();
     this.fileRepositoryProtocol = fileRepositoryProtocol;
 
     try {

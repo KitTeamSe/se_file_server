@@ -1,8 +1,8 @@
 package com.se.fileserver.v1.common.infra.security.provider;
 
 import com.se.fileserver.v1.common.application.service.AccountContextService;
-import com.se.fileserver.v1.common.domain.error.GlobalErrorCode;
-import com.se.fileserver.v1.common.domain.exception.BusinessException;
+import com.se.fileserver.v1.common.domain.exception.NotFoundException;
+import com.se.fileserver.v1.common.domain.exception.UnauthenticatedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -62,11 +62,11 @@ public class JwtTokenResolver {
     try {
       Jws<Claims> claims = Jwts.parser().setSigningKey(securityKey).parseClaimsJws(token);
       if(claims.getBody().getExpiration().before(new Date()))
-        throw new BusinessException(GlobalErrorCode.EXPIRED_JWT_TOKEN);
+        throw new UnauthenticatedException("token is expired");
       return true;
     }
     catch (ExpiredJwtException e){
-      throw new BusinessException(GlobalErrorCode.EXPIRED_JWT_TOKEN);
+      throw new UnauthenticatedException("token is expired");
     }
     catch (Exception e) {
       return false;
