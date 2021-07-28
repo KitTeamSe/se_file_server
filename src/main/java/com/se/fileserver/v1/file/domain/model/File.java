@@ -8,12 +8,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "attachment")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class File extends BaseEntity {
   // TODO: 파일 태스크
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -41,9 +46,7 @@ public class File extends BaseEntity {
   @Column(nullable = false)
   private Long size;
 
-  /* constructor */
-  protected File() {}
-
+  @Builder
   public File(@Size(max = 255) String downloadUrl,
       @Size(min = 2, max = 40) String service,
       @Size(min = 2, max = 40) String fileType,
@@ -57,46 +60,4 @@ public class File extends BaseEntity {
     this.size = size;
   }
 
-  public File(Long id, @Size(max = 255) String downloadUrl,
-      @Size(min = 2, max = 40) String service,
-      @Size(min = 2, max = 40) String fileType,
-      @Size(max = 255) String originalName,
-      @Size(max = 255) String saveName, Long size) {
-    this.id = id;
-    this.downloadUrl = downloadUrl;
-    this.service = service;
-    this.fileType = fileType;
-    this.originalName = originalName;
-    this.saveName = saveName;
-    this.size = size;
-  }
-
-  /* getter */
-  public Long getId() {
-    return id;
-  }
-
-  public String getDownloadUrl() {
-    return downloadUrl;
-  }
-
-  public String getService() {
-    return service;
-  }
-
-  public String getFileType() {
-    return fileType;
-  }
-
-  public String getOriginalName() {
-    return originalName;
-  }
-
-  public String getSaveName() {
-    return saveName;
-  }
-
-  public Long getSize() {
-    return size;
-  }
 }
