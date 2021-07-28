@@ -1,6 +1,8 @@
 package com.se.fileserver.v1.file.application.service;
 
-import com.se.fileserver.v1.file.application.service.exception.FileUploadException;
+import com.se.fileserver.v1.common.domain.exception.AttachmentTooLargeException;
+import com.se.fileserver.v1.file.application.service.exception.FileStoreException;
+import com.se.fileserver.v1.file.application.service.exception.InvalidFileException;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
 import java.io.IOException;
@@ -46,7 +48,7 @@ public class FileUploadService {
     }
 
     if (!isValidFile(file))
-      throw new FileUploadException("업로드할 파일명이 유효하지 않음");
+      throw new InvalidFileException("업로드할 파일이 유효하지 않음");
 
     String fileType = getExtension(file);
     String originalName = file.getOriginalFilename();
@@ -54,7 +56,6 @@ public class FileUploadService {
     String saveName;
     do {
       saveName = createSaveName(fileType);
-      System.out.println(saveName);
     } while (isSameFileNameExists(targetLocation.resolve(saveName)));
     String downloadUri = createDownloadUri(saveName);
 
@@ -67,10 +68,7 @@ public class FileUploadService {
         size
     );
 
-    System.out.print("새로운 파일 생성, ");
     targetLocation = targetLocation.resolve(saveName);
-    System.out.println(targetLocation.toString());
-    System.out.println("service : " + newFile.getService());
     fileRepository.save(newFile);
     storeFile(file, targetLocation);
 
@@ -78,19 +76,20 @@ public class FileUploadService {
   }
 
   /* 유효성 검증 : 파일명, 파일 크기 */
-  public boolean isValidFile(MultipartFile file) {
+  private boolean isValidFile(MultipartFile file) {
     String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-    // TODO : error convention
+
     if (file == null)
-      throw new FileUploadException("파일을 가져오지 못함 ");
+      throw new InvalidFileException("파일을 가져오지 못하였습니다.");
+
     if (fileName.contains(".."))
-      throw new FileUploadException("파일명에 [..] 존재");
+      throw new InvalidFileException("파일명에 [..]가 존재합니다.");
 
     if (file.getSize() <= 0)
-      throw new FileUploadException("파일 크기가 0보다 작습니다.");
+      throw new InvalidFileException("파일 크기가 0보다 작습니다.");
 
     if (file.getSize() >= maxFileSize)
-      throw new FileUploadException("파일 크기가 최대 용량을 초과합니다.");
+      throw new AttachmentTooLargeException("파일 크기가 " +maxFileSize + "를 초과합니다.");
 
     return true;
   }
@@ -127,7 +126,7 @@ public class FileUploadService {
       return true;
     } catch (IOException e) {
       e.printStackTrace();
-      throw new FileUploadException("파일을 업로드할 수 없습니다 : " + file.getOriginalFilename());
+      throw new FileStoreException("파일을 업로드할 수 없습니다 : " + file.getOriginalFilename());
     }
   }
 }

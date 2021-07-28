@@ -42,10 +42,20 @@ public class FileApiController {
   @ApiOperation("파일 멀티 업로드")
   @PostMapping("/files")
   @ResponseStatus(value = HttpStatus.CREATED)
-  public Response<List<File>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> files, @RequestParam String service) {
-    List<File> uploadFlies = files.stream()
+  public List<Response<File>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> files, @RequestParam String service) {
+    List<File> uploadFiles = files.stream()
         .map(file -> fileUploadService.upload(file,service)).collect(Collectors.toList());
-    return filePresenterFormatter.uploadFiles(uploadFlies);
+    return filePresenterFormatter.uploadFiles(uploadFiles);
   }
+
+//  @ApiOperation("파일 멀티 업로드")
+//  @PostMapping("/files")
+//  @ResponseStatus(value = HttpStatus.CREATED)
+//  public Response<List<File>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> files, @RequestParam String service) {
+//    List<File> uploadFlies = files.stream()
+//        .map(file -> fileUploadService.upload(file,service)).collect(Collectors.toList());
+//    return filePresenterFormatter.uploadFiles(uploadFlies);
+//  }
+
 
 }

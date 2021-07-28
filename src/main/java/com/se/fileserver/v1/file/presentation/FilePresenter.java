@@ -6,6 +6,5 @@ import java.util.List;
 
 public interface FilePresenter {
   Response<File> uploadFile(File file);
-  Response<List<File>> uploadFiles(List<File> files);
-
+  List<Response<File>> uploadFiles(List<File> files);
 }
