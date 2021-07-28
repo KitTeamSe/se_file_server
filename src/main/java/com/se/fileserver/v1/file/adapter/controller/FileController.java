@@ -1,15 +1,9 @@
 package com.se.fileserver.v1.file.adapter.controller;
 
-import com.se.fileserver.v1.common.domain.exception.BusinessException;
-import com.se.fileserver.v1.file.application.dto.FileDownloadVo;
-import com.se.fileserver.v1.file.application.dto.FileDto;
+import com.se.fileserver.v1.common.domain.exception.NotFoundException;
+import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.application.service.FileDownloadService;
-import com.se.fileserver.v1.file.application.service.error.FileErrorCode;
 import io.swagger.annotations.ApiOperation;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -38,17 +32,17 @@ public class FileController {
   @ApiOperation(value = "파일 다운로드", notes = "파일 서버에 저장된 파일을 다운로드한다.")
   public ResponseEntity<Resource> downloadFile(@PathVariable String saveName) {
     // Load file as Resource
-    FileDownloadVo fileDownloadVo = fileDownloadService.downloadFile(saveName);
+    FileDownloadDto fileDownloadDto = fileDownloadService.downloadFile(saveName);
 
-    if (fileDownloadVo == null) {
-      throw new BusinessException(FileErrorCode.FILE_DOES_NOT_EXISTS);
+    if (fileDownloadDto == null) {
+      throw new NotFoundException("파일이 존재하지 않습니다.");
     }
 
     return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType(fileDownloadVo.getFileType()))
+        .contentType(MediaType.parseMediaType(fileDownloadDto.getFileType()))
         .header(
-            HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDownloadVo.getOriginalName() + "\"")
-        .body(fileDownloadVo.getResource());
+            HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDownloadDto.getOriginalName() + "\"")
+        .body(fileDownloadDto.getResource());
   }
 
   // 파일 삭제

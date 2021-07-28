@@ -1,10 +1,8 @@
 package com.se.fileserver.v1.file.application.service;
 
-import com.se.fileserver.v1.common.domain.exception.BusinessException;
+import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.config.FileProperties;
-import com.se.fileserver.v1.file.application.dto.FileDto;
-import com.se.fileserver.v1.file.application.dto.FileDownloadVo;
-import com.se.fileserver.v1.file.application.service.error.FileErrorCode;
+import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
 import java.net.MalformedURLException;
@@ -31,25 +29,21 @@ public class FileDownloadService {
     try {
       Files.exists(this.fileLocation);
     } catch (Exception e) {
-      throw new BusinessException(FileErrorCode.DOWNLOAD_PATH_DOES_NOT_EXISTS);
+      throw new NotFoundException("존재하지 않는 파일 경로입니다.");
     }
   }
 
-  public FileDownloadVo downloadFile(String fileName) {
+  public FileDownloadDto downloadFile(String saveName) {
     try {
-      File file = fileRepositoryProtocol.findBySaveName(fileName);
+      File file = fileRepositoryProtocol.findBySaveName(saveName)
+          .orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
 
-      if (file == null) {
-        throw new BusinessException(FileErrorCode.FILE_DOES_NOT_EXISTS);
-      }
-
-      Path filePath = this.fileLocation.resolve(file.getService()).resolve(fileName).normalize();
+      Path filePath = this.fileLocation.resolve(file.getService()).resolve(saveName).normalize();
       Resource resource = new UrlResource(filePath.toUri());
 
       // 리소스 없으면 예외처리
       if (!resource.exists()) {
-        // TODO : 리소스가 없다 == 파일이 없다? 고민하기
-        throw new BusinessException(FileErrorCode.FILE_DOES_NOT_EXISTS);
+        throw new NotFoundException("존재하지 않는 리소스입니다.");
       }
 
       // 파일 타입 정의
@@ -62,19 +56,14 @@ public class FileDownloadService {
       String originalFileName = new String(file.getOriginalName().getBytes(StandardCharsets.UTF_8),
           StandardCharsets.ISO_8859_1);
 
-      System.out.println(file.getOriginalName());
-      System.out.println(originalFileName);
-
-      return new FileDownloadVo(originalFileName, resource, fileType);
+      return FileDownloadDto.builder()
+          .originalName(originalFileName)
+          .resource(resource)
+          .fileType(fileType)
+          .build();
 
     } catch (MalformedURLException e) {
-      throw new BusinessException(FileErrorCode.FILE_DOES_NOT_EXISTS);
+      throw new NotFoundException("존재하지 않는 리소스입니다.");
     }
-  }
-
-  public String getOriginalName(String saveName) {
-    // DB에서 원본파일명으로 복구함.
-    File file = fileRepositoryProtocol.findBySaveName(saveName);
-    return file.getOriginalName();
   }
 }
