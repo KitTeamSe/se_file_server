@@ -5,6 +5,7 @@ import com.se.fileserver.v1.common.presentation.response.Response;
 import com.se.fileserver.v1.file.adapter.presenter.FilePresenter;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.application.service.FileDownloadService;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +36,7 @@ public class FileController {
 
   // 파일 다운로드
   @GetMapping("/{saveName:.+}")
+  @ApiImplicitParam(name = "saveName", value = "저장된 파일 명")
   @ApiOperation(value = "파일 다운로드", notes = "파일 서버에 저장된 파일을 다운로드한다.")
   public ResponseEntity<Resource> downloadFile(@PathVariable String saveName) {
     // Load file as Resource
@@ -46,12 +48,6 @@ public class FileController {
 
     return filePresenter.downloadFile(fileDownloadDto);
   }
-
-
-  @GetMapping("/test")
-    public Response<String> test() {
-      return new Response<>(HttpStatus.OK, "Hello?");
-    }
 
   // 파일 삭제
 

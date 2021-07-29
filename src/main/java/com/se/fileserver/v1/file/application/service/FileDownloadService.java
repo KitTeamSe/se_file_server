@@ -28,38 +28,42 @@ public class FileDownloadService {
     ensureDownloadDir();
   }
 
-  public FileDownloadDto downloadFile(String saveName) {
+  private Resource setResource(Path filePath) {
+    Resource resource;
     try {
-      File file = fileRepositoryProtocol.findBySaveName(saveName)
-          .orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
-
-      Path filePath = this.fileLocation.resolve(file.getService()).resolve(saveName).normalize();
-      Resource resource = new UrlResource(filePath.toUri());
-
+      resource = new UrlResource(filePath.toUri());
       // 리소스 없으면 예외처리
       if (!resource.exists()) {
         throw new NotFoundException("존재하지 않는 리소스입니다.");
       }
-
-      // 파일 타입 정의
-      String fileType = file.getFileType();
-      if (fileType == null) {
-        fileType = "application/octet-stream";
-      }
-
-      // 한글 출력 문제 해결
-      String originalFileName = new String(file.getOriginalName().getBytes(StandardCharsets.UTF_8),
-          StandardCharsets.ISO_8859_1);
-
-      return FileDownloadDto.builder()
-          .originalName(originalFileName)
-          .resource(resource)
-          .fileType(fileType)
-          .build();
-
     } catch (MalformedURLException | NotFoundException e) {
       throw new NotFoundException(e.getMessage());
     }
+    return resource;
+  }
+
+  public FileDownloadDto downloadFile(String saveName) {
+    File file = fileRepositoryProtocol.findBySaveName(saveName)
+        .orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
+
+    Path filePath = this.fileLocation.resolve(file.getService()).resolve(saveName).normalize();
+    Resource resource = setResource(filePath);
+
+    // 파일 타입 정의
+    String fileType = file.getFileType();
+    if (fileType == null) {
+      fileType = "application/octet-stream";
+    }
+
+    // 한글 출력 문제 해결
+    String originalFileName = new String(file.getOriginalName().getBytes(StandardCharsets.UTF_8),
+        StandardCharsets.ISO_8859_1);
+
+    return FileDownloadDto.builder()
+        .originalName(originalFileName)
+        .resource(resource)
+        .fileType(fileType)
+        .build();
   }
 
   private void ensureDownloadDir() {
