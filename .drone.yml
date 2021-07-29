@@ -1,0 +1,38 @@
+kind: pipeline
+type: docker
+name: cicd
+
+steps:
+  - name: build & test
+    image: openjdk:11
+    build: .
+    resources:
+      requests:
+        cpu: 2000
+      limits:
+        cpu: 2000
+        memory: 2048MiB
+    commands:
+      - chmod +x gradlew
+      - ./gradlew build test
+    depends_on:
+      - mysql-db
+
+services:
+  - name: mysql-db
+    image: mysql:5.7.33
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    resources:
+      requests:
+        cpu: 1000
+        memory: 1024MiB
+      limits:
+        cpu: 1000
+        memory: 1024MiB
+    ports:
+      - 3306
+
