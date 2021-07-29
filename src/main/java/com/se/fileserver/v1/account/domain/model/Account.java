@@ -1,6 +1,5 @@
 package com.se.fileserver.v1.account.domain.model;
 
-import com.se.fileserver.v1.account.domain.service.AccountService;
 import com.se.fileserver.v1.common.domain.model.BaseEntity;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -10,12 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Account extends BaseEntity implements AccountService {
+public class Account extends BaseEntity{
   public static final String MANAGE_TOKEN = "ACCOUNT_MANAGE";
 
   @Id
@@ -74,10 +72,5 @@ public class Account extends BaseEntity implements AccountService {
   public Account(@Size(min = 4, max = 20)String idString, String password) {
     this.idString = idString;
     this.password = password;
-  }
-
-  @Override
-  public boolean isMatch(PasswordEncoder passwordEncoder, String rawPassword) {
-    return passwordEncoder.matches(rawPassword, this.password);
   }
 }

@@ -29,11 +29,13 @@ public class AccountSignInService {
   @Transactional
   public String signIn(AccountSignInDto accountSignInDto, String ip){
     Account account = accountRepository.findByIdString(accountSignInDto.getId()).orElseThrow(() -> new BadRequestException("Account not found."));
-    if(!account.isMatch(passwordEncoder, accountSignInDto.getPassword())){
+    if(isMatch(account, accountSignInDto.getPassword())){
       throw new BadRequestException("The password is incorrect.");
     }
-    String token = jwtTokenResolver.createToken(String.valueOf(account.getIdString()));
+    return jwtTokenResolver.createToken(String.valueOf(account.getIdString()));
+  }
 
-    return token;
+  private boolean isMatch(Account account, String rawPassword){
+    return passwordEncoder.matches(rawPassword, account.getPassword());
   }
 }
