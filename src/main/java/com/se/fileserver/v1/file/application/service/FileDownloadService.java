@@ -21,16 +21,11 @@ public class FileDownloadService {
 
   private final FileRepositoryProtocol fileRepositoryProtocol;
 
-  public FileDownloadService(@Value("se-file-server.upload-dir") String directory,
+  public FileDownloadService(@Value("${se-file-server.upload-dir}") String directory,
       FileRepositoryProtocol fileRepositoryProtocol) {
     this.fileLocation = Paths.get(directory).toAbsolutePath().normalize();
     this.fileRepositoryProtocol = fileRepositoryProtocol;
-
-    try {
-      Files.exists(this.fileLocation);
-    } catch (Exception e) {
-      throw new NotFoundException("존재하지 않는 파일 경로입니다.");
-    }
+    ensureDownloadDir();
   }
 
   public FileDownloadDto downloadFile(String saveName) {
@@ -62,8 +57,16 @@ public class FileDownloadService {
           .fileType(fileType)
           .build();
 
-    } catch (MalformedURLException e) {
-      throw new NotFoundException("존재하지 않는 리소스입니다.");
+    } catch (MalformedURLException | NotFoundException e) {
+      throw new NotFoundException(e.getMessage());
+    }
+  }
+
+  private void ensureDownloadDir() {
+    try {
+      Files.exists(this.fileLocation);
+    } catch (Exception e) {
+      throw new NotFoundException("존재하지 않는 파일 경로입니다.");
     }
   }
 }

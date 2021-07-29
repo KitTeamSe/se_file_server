@@ -9,8 +9,8 @@ import org.springframework.core.io.Resource;
 @Builder
 public class FileDownloadDto {
 
-  String originalName;
-  Resource resource;
-  String fileType;
+  private String originalName;
+  private Resource resource;
+  private String fileType;
 
 }

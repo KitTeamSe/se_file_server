@@ -1,11 +1,14 @@
 package com.se.fileserver.v1.file.adapter.controller;
 
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
+import com.se.fileserver.v1.common.presentation.response.Response;
+import com.se.fileserver.v1.file.adapter.presenter.FilePresenter;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.application.service.FileDownloadService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class FileController {
   // TODO: 파일 태스크
   private final FileDownloadService fileDownloadService;
+  private final FilePresenter filePresenter;
 
-  public FileController(FileDownloadService fileDownloadService) {
+  public FileController(FileDownloadService fileDownloadService,
+      FilePresenter filePresenter) {
     this.fileDownloadService = fileDownloadService;
+    this.filePresenter = filePresenter;
   }
 
   // 파일 업로드
@@ -38,12 +44,14 @@ public class FileController {
       throw new NotFoundException("파일이 존재하지 않습니다.");
     }
 
-    return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType(fileDownloadDto.getFileType()))
-        .header(
-            HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDownloadDto.getOriginalName() + "\"")
-        .body(fileDownloadDto.getResource());
+    return filePresenter.downloadFile(fileDownloadDto);
   }
+
+
+  @GetMapping("/test")
+    public Response<String> test() {
+      return new Response<>(HttpStatus.OK, "Hello?");
+    }
 
   // 파일 삭제
 

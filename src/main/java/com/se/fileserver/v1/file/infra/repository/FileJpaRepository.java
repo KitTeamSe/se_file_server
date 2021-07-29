@@ -6,6 +6,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface FileJpaRepository extends JpaRepository<File,Long>, FileRepositoryProtocol {
+public interface FileJpaRepository extends JpaRepository<File,Long> {
   Optional<File> findBySaveName(String fileName);
 }
