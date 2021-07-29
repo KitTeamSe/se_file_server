@@ -57,7 +57,7 @@ public class AccountContextService implements UserDetailsService {
 
   public UserDetails loadDefaultGroupAuthorities(String groupName) throws UsernameNotFoundException {
     Set<GrantedAuthority> temp = new HashSet<>();
-    return new User("test", "test", temp);
+    return new User(ANONYMOUS_ID, ANONYMOUS_PW, temp);
   }
 
   public boolean hasAuthority(String authority){
