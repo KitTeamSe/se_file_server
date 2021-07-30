@@ -18,15 +18,10 @@ public class FileRepository implements FileRepositoryProtocol{
   }
 
   @Override
-  public File save(File file) {
-    return jpa.save(file);
-  }
-
-  @Override
   public List<File> saveAll(List<File> files) {
     return jpa.saveAll(files);
   }
-//
+
 //  @Override
 //  public Page<File> findAllByService(String service) {
 //    return jpa.findAllByService(service);
