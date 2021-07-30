@@ -1,13 +1,13 @@
 package com.se.fileserver.v1.file.adapter.controller;
 
 import com.se.fileserver.v1.common.presentation.response.Response;
+import com.se.fileserver.v1.file.application.dto.FileCreateDto;
 import com.se.fileserver.v1.file.application.service.FileUploadService;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.presentation.FilePresenterFormatter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,31 +31,13 @@ public class FileApiController {
     this.filePresenterFormatter = filePresenterFormatter;
   }
 
+  /* (단일, 다중 가능) */
   @ApiOperation("파일 업로드")
   @PostMapping("/file")
   @ResponseStatus(value = HttpStatus.CREATED)
-  public Response<File> uploadFile(@RequestParam(value = "file") MultipartFile file, @RequestParam String service) {
-    File uploadFile = fileUploadService.upload(file, service);
-    return filePresenterFormatter.uploadFile(uploadFile);
+  public List<Response<FileCreateDto>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> multipartFiles, @RequestParam String service) {
+    List<File> fileEntityList = fileUploadService.upload(multipartFiles,service);
+    return filePresenterFormatter.uploadFiles(fileEntityList);
   }
-
-  @ApiOperation("파일 멀티 업로드")
-  @PostMapping("/files")
-  @ResponseStatus(value = HttpStatus.CREATED)
-  public List<Response<File>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> files, @RequestParam String service) {
-    List<File> uploadFiles = files.stream()
-        .map(file -> fileUploadService.upload(file,service)).collect(Collectors.toList());
-    return filePresenterFormatter.uploadFiles(uploadFiles);
-  }
-
-//  @ApiOperation("파일 멀티 업로드")
-//  @PostMapping("/files")
-//  @ResponseStatus(value = HttpStatus.CREATED)
-//  public Response<List<File>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> files, @RequestParam String service) {
-//    List<File> uploadFlies = files.stream()
-//        .map(file -> fileUploadService.upload(file,service)).collect(Collectors.toList());
-//    return filePresenterFormatter.uploadFiles(uploadFlies);
-//  }
-
 
 }
