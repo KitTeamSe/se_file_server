@@ -3,6 +3,7 @@ package com.se.fileserver.v1.common.infra.security.config;
 import com.se.fileserver.v1.common.infra.security.filter.JwtAuthenticationFilters;
 import com.se.fileserver.v1.common.infra.security.provider.JwtTokenResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -11,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -19,6 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtTokenResolver jwtTokenResolver;
+
+  @Bean
+  public PasswordEncoder getPasswordEncoder(){
+    return new BCryptPasswordEncoder();
+  }
 
   @Autowired
   public WebSecurityConfig(JwtTokenResolver jwtTokenResolver) {

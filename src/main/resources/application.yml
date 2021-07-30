@@ -11,6 +11,13 @@ spring:
     username: test
     password: test
     driver-class-name: com.mysql.cj.jdbc.Driver
+    admin:
+      id: admin
+      password: $2a$10$OhHPNBcNrB/9OV/Tv6I.yOwZcL7byFgBGpve9XgoWrMAJLVbccKtG
+      name: admin
+      nickname: admin
+      studentId: 0
+      email: test@kumoh.ac.kr
   jpa:
     hibernate:
       ddl-auto: create
