@@ -38,48 +38,53 @@ public class FileUploadService {
   @Transactional
   public List<File> upload(List<MultipartFile> multipartFiles, String service) {
 
+    for (MultipartFile multipartFile : multipartFiles) {
+      checkFileCondition(multipartFile);
+    }
+
     Path targetLocation = this.fileLocation;
     targetLocation = ensureUploadDirectory(targetLocation, service);
 
-    checkFileCondition(multipartFiles);
-
     List<File> fileEntityList = new ArrayList<>();
-
     for (MultipartFile multipartFile : multipartFiles) {
-
-      String fileType = getExtension(multipartFile);
-      String originalName = multipartFile.getOriginalFilename();
-      Long size = multipartFile.getSize();
-      String saveName;
-      Path storedLocation = targetLocation;
-      do {
-        saveName = createSaveName(fileType);
-      } while (isSameFileNameExists(storedLocation.resolve(saveName)));
-
-      String downloadUri = createDownloadUri(saveName);
-
-      File newFile = new File(
-          downloadUri,
-          service,
-          fileType,
-          originalName,
-          saveName,
-          size
-      );
-
-      storedLocation = storedLocation.resolve(saveName);
-      fileRepository.save(newFile);
-      storeFile(multipartFile, storedLocation);
-
-      fileEntityList.add(newFile);
+      fileEntityList.add(createFileEntity(multipartFile, targetLocation, service));
     }
+
+    fileRepository.saveAll(fileEntityList);
     return fileEntityList;
   }
 
-  /* 유효성 검증 : 파일명, 파일 크기 */
-  private void checkFileCondition(List<MultipartFile> multipartFileList) {
-    for (MultipartFile multipartFile : multipartFileList) {
+  /* 파일 객체 생성 */
+  private File createFileEntity(MultipartFile multipartFile, Path targetLocation, String service) {
 
+    String fileType = getExtension(multipartFile);
+    String originalName = multipartFile.getOriginalFilename();
+    Long size = multipartFile.getSize();
+    String saveName;
+    Path storedLocation = targetLocation;
+    do {
+      saveName = createSaveName(fileType);
+    } while (isSameFileNameExists(storedLocation.resolve(saveName)));
+
+    String downloadUri = createDownloadUri(saveName);
+
+    File newFile = new File(
+        downloadUri,
+        service,
+        fileType,
+        originalName,
+        saveName,
+        size
+    );
+
+    storedLocation = storedLocation.resolve(saveName);
+    storeFile(multipartFile, storedLocation);
+
+    return newFile;
+  }
+
+  /* 유효성 검증 : 파일명, 파일 크기 */
+  private void checkFileCondition(MultipartFile multipartFile) {
       String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 
       if (multipartFile == null) {
@@ -97,8 +102,6 @@ public class FileUploadService {
       if (multipartFile.getSize() >= maxFileSize) {
         throw new AttachmentTooLargeException("파일 크기가 " + maxFileSize + "를 초과합니다 : " + fileName);
       }
-
-    }
   }
 
   /* 서버에 저장될 파일명 검증 */
