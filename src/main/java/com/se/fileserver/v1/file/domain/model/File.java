@@ -21,7 +21,7 @@ public class File extends BaseEntity {
   // TODO: 파일 태스크
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Long fileId;
 
   @Size(max = 255)
   @Column(nullable = false, unique = true)

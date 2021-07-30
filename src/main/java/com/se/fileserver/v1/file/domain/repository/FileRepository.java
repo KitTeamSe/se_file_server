@@ -1,9 +1,7 @@
 package com.se.fileserver.v1.file.domain.repository;
 
-import com.se.fileserver.v1.file.application.dto.FileCreateDto;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.infra.repository.FileJpaRepository;
-import java.util.List;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -22,10 +20,11 @@ public class FileRepository implements FileRepositoryProtocol{
     return jpa.save(file);
   }
 
-  @Override
-  public List<File> saveAll(List<File> files) {
-    return jpa.saveAll(files);
-  }
+//
+//  @Override
+//  public Page<File> findAllByService(String service) {
+//    return jpa.findAllByService(service);
+//  }
 
 
 }

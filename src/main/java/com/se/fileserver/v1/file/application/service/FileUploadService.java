@@ -25,12 +25,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class FileUploadService {
 
   private final FileRepositoryProtocol fileRepository;
-  private final TransactionHandler transactionHandler;
 
-  public FileUploadService(FileRepositoryProtocol fileRepository,
-      TransactionHandler transactionHandler) {
+  public FileUploadService(FileRepositoryProtocol fileRepository) {
     this.fileRepository = fileRepository;
-    this.transactionHandler = transactionHandler;
   }
 
   @Value("${se-file-server.max-file-size}")
@@ -38,7 +35,7 @@ public class FileUploadService {
   @Value("${se-file-server.upload-dir}")
   private Path fileLocation;
 
-
+  @Transactional
   public List<File> upload(List<MultipartFile> multipartFiles, String service) {
 
     Path targetLocation = this.fileLocation;
@@ -71,10 +68,9 @@ public class FileUploadService {
       );
 
       storedLocation = storedLocation.resolve(saveName);
-      transactionHandler.runInTransaction(() -> {
-        fileRepository.save(newFile);
-      });
+      fileRepository.save(newFile);
       storeFile(multipartFile, storedLocation);
+
       fileEntityList.add(newFile);
     }
     return fileEntityList;
