@@ -11,6 +11,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import org.hamcrest.MatcherAssert;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -120,7 +121,7 @@ public class FileTest {
           is("could not execute statement; SQL [n/a];"
               + " constraint [\"PUBLIC.UK_5SDO5ONW54PY0U17U8WDKGE2Q_INDEX_2 ON PUBLIC.FILE(DOWNLOAD_URL) VALUES 1\";"
               + " SQL statement:\n"
-              + "insert into file (id, created_at, updated_at, download_url, file_type, original_name, save_name, service, size) "
+              + "insert into file (file_id, created_at, updated_at, download_url, file_type, original_name, save_name, service, size) "
               + "values (null, ?, ?, ?, ?, ?, ?, ?, ?) [23505-200]]; "
               + "nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement"));
     }

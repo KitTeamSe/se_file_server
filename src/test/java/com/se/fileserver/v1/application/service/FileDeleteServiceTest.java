@@ -19,7 +19,7 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class FileDeleteServiceTest {
 
-  private String directory = "C:\\Users\\Samsung\\Desktop\\SE 리뉴얼\\file_test";
+  private String directory = "/var/se-file-server";
 
   @Mock
   private FileRepositoryProtocol fileRepositoryProtocol;
