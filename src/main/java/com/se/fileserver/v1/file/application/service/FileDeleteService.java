@@ -20,10 +20,12 @@ public class FileDeleteService {
   public FileDeleteService(@Value("${se-file-server.upload-dir}") String directory,
       FileRepositoryProtocol fileRepositoryProtocol) {
     this.fileRepositoryProtocol = fileRepositoryProtocol;
-    this.fileLocation = ensureDownloadDir(directory);
+    this.fileLocation = Paths.get(directory).toAbsolutePath().normalize();
   }
 
   public void deleteFile(String service, String saveName) {
+    checkFileLocationExists();
+
     Path filePath = this.fileLocation.resolve(service).resolve(saveName).normalize();
     java.io.File file = new java.io.File(filePath.toString());
     File fileModel = fileRepositoryProtocol.findBySaveName(saveName);
@@ -39,16 +41,9 @@ public class FileDeleteService {
     fileRepositoryProtocol.delete(fileModel);
   }
 
-  private Path ensureDownloadDir(String directory) {
-    Path fileLocation;
-    try {
-      fileLocation = Paths.get(directory).toAbsolutePath().normalize();
-      if (!Files.exists(fileLocation)) {
-        throw new Exception();
-      }
-    } catch (Exception e) {
+  private void checkFileLocationExists() {
+    if (!Files.exists(this.fileLocation)) {
       throw new NotFoundException("존재하지 않는 파일 경로입니다.");
     }
-    return fileLocation;
   }
 }

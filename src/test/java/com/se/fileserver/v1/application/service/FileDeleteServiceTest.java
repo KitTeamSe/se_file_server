@@ -76,9 +76,12 @@ public class FileDeleteServiceTest {
   @Test
   void 존재하지_않는_파일_경로() {
     String notExistentPath = "C:\\Users\\NotExistent";
+    String saveName = "file2.png";
+    String service = "se";
     try {
       // when
       fileDeleteService = new FileDeleteService(notExistentPath, fileRepositoryProtocol);
+      fileDeleteService.deleteFile(service, saveName);
     } catch (NotFoundException e) {
       // then
       assertThat(e.getMessage(), is("존재하지 않는 파일 경로입니다."));
