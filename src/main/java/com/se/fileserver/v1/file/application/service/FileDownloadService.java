@@ -23,8 +23,8 @@ public class FileDownloadService {
 
   public FileDownloadService(@Value("${se-file-server.upload-dir}") String directory,
       FileRepositoryProtocol fileRepositoryProtocol) {
-    this.fileLocation = ensureDownloadDir(directory);
     this.fileRepositoryProtocol = fileRepositoryProtocol;
+    this.fileLocation = ensureDownloadDir(directory);
   }
 
   private Resource setResource(Path filePath) {
