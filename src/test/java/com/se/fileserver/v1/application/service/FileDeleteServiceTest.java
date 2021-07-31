@@ -1,65 +1,110 @@
 package com.se.fileserver.v1.application.service;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.se.fileserver.v1.common.infra.security.config.WebSecurityConfig;
-import com.se.fileserver.v1.common.infra.security.provider.JwtTokenResolver;
-import com.se.fileserver.v1.config.FileProperties;
-import com.se.fileserver.v1.file.adapter.controller.FileController;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.file.application.service.FileDeleteService;
+import com.se.fileserver.v1.file.domain.model.File;
+import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.context.WebApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@WebMvcTest(value = FileController.class)
-@EnableConfigurationProperties({FileProperties.class, })
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class FileDeleteServiceTest {
-  @Autowired
-  private MockMvc mockMvc;
 
-  @MockBean
+  private String directory = "C:\\Users\\Samsung\\Desktop\\SE 리뉴얼\\file_test";
+
+  @Mock
+  private FileRepositoryProtocol fileRepositoryProtocol;
+
   private FileDeleteService fileDeleteService;
 
-  // 파일 관련련
- @Autowired
-  private FileProperties prop;
+  @Test
+  void 파일_삭제_성공() {
+    fileDeleteService = new FileDeleteService(directory, fileRepositoryProtocol);
+    String saveName = "file.png";
+    String downloadUrl = "http://localhost:8070/file/download/file.png";
+    String service = "se";
+    String fileType = "image/png";
+    String originalName = "팀로그.png";
+    Long size = 1L;
 
-  // Spring Security 관련
-  @MockBean
-  private JwtTokenResolver jwtTokenResolver;
+    File file = new File(downloadUrl, service, fileType, originalName, saveName, size);
+    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(file);
+    willDoNothing().given(fileRepositoryProtocol).delete(file);
 
-  @Autowired
-  private WebSecurityConfig webSecurityConfig;
-
-  @Autowired
-  private WebApplicationContext webApplicationContext;
+    try {
+      // when
+      fileDeleteService.deleteFile(service, saveName);
+    } catch (NotFoundException e) {
+      e.printStackTrace();
+    }
+    // then
+    System.out.println("삭제 완료");
+  }
 
   @Test
-  void 파일_삭제_성공() throws Exception {
-    // given
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    String saveName = "teamlog.png";
+  void 존재하지_않는_파일() {
+    fileDeleteService = new FileDeleteService(directory, fileRepositoryProtocol);
+    String saveName = "file2.png";
+    String downloadUrl = "http://localhost:8070/file/download/file.png";
     String service = "se";
-    BDDMockito.given(fileDeleteService.deleteFile(saveName, service)).willReturn("Deleted successfully.");
-    MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
-    info.add("saveName", saveName);
-    info.add("service", service);
+    String fileType = "image/png";
+    String originalName = "팀로그.png";
+    Long size = 1L;
 
-    // when
-    final ResultActions actions = mockMvc.perform(delete("/file-server/v1/" + saveName).params(info));
-    // then
-    actions.andExpect(status().isOk()).andExpect(content().string("Deleted successfully.")).andDo(print());
+    File file = new File(downloadUrl, service, fileType, originalName, saveName, size);
+    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(file);
+    willDoNothing().given(fileRepositoryProtocol).delete(file);
+
+    try {
+      // when
+      fileDeleteService.deleteFile(service, saveName);
+    } catch (NotFoundException e) {
+      // then
+      assertThat(e.getMessage(), is("존재하지 않는 파일입니다."));
+    }
+  }
+
+  @Test
+  void 존재하지_않는_파일_경로() {
+    String notExistentPath = "C:\\Users\\NotExistent";
+    try {
+      // when
+      fileDeleteService = new FileDeleteService(notExistentPath, fileRepositoryProtocol);
+    } catch (NotFoundException e) {
+      // then
+      assertThat(e.getMessage(), is("존재하지 않는 파일 경로입니다."));
+    }
+  }
+
+  @Test
+  void 파일_삭제_실패() {
+    fileDeleteService = new FileDeleteService(directory, fileRepositoryProtocol);
+    String saveName = "d447.mp4";
+    String downloadUrl = "http://localhost:8070/file/download/d447.png";
+    String service = "se";
+    String fileType = "image/png";
+    String originalName = "d447.mp4";
+    Long size = 1L;
+
+    File file = new File(downloadUrl, service, fileType, originalName, saveName, size);
+    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(file);
+    willDoNothing().given(fileRepositoryProtocol).delete(file);
+
+    try {
+      // when
+      fileDeleteService.deleteFile(service, saveName);
+    } catch (NotFoundException e) {
+      // then
+      assertThat(e.getMessage(), is("존재하지 않는 파일입니다."));
+    }
   }
 }
