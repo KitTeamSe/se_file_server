@@ -13,6 +13,7 @@ import javax.validation.ValidatorFactory;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @DataJpaTest
 public class FileTest {
 
+  @Qualifier("fileJpaRepository")
   @Autowired
   private JpaRepository jpaRepository;
 
