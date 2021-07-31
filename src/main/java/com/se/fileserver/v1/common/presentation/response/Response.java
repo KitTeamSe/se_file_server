@@ -9,13 +9,13 @@ public class Response<E> {
   private final String message;
   private E data;
 
-  public Response(HttpStatus status, String message) {
-    this.status = status;
-    this.message = message;
-  }
-
   public Response(HttpStatus status, String message, E data) {
     this(status, message);
     this.data = data;
+  }
+
+  public Response(HttpStatus status, String message) {
+    this.status = status;
+    this.message = message;
   }
 }

@@ -1,7 +1,7 @@
 package com.se.fileserver.v1.common.infra.security.provider;
 
-import com.se.fileserver.v1.common.application.service.AccountContextService;
-import com.se.fileserver.v1.common.domain.exception.NotFoundException;
+import com.se.fileserver.v1.account.application.service.AccountContextService;
+import com.se.fileserver.v1.common.domain.error.GlobalErrorCode;
 import com.se.fileserver.v1.common.domain.exception.UnauthenticatedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
