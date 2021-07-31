@@ -23,9 +23,8 @@ public class FileDownloadService {
 
   public FileDownloadService(@Value("${se-file-server.upload-dir}") String directory,
       FileRepositoryProtocol fileRepositoryProtocol) {
-    this.fileLocation = Paths.get(directory).toAbsolutePath().normalize();
+    this.fileLocation = ensureDownloadDir(directory);
     this.fileRepositoryProtocol = fileRepositoryProtocol;
-    ensureDownloadDir();
   }
 
   private Resource setResource(Path filePath) {
@@ -66,11 +65,16 @@ public class FileDownloadService {
         .build();
   }
 
-  private void ensureDownloadDir() {
+  private Path ensureDownloadDir(String directory) {
+    Path fileLocation;
     try {
-      Files.exists(this.fileLocation);
+      fileLocation = Paths.get(directory).toAbsolutePath().normalize();
+      if (!Files.exists(fileLocation)) {
+        throw new Exception();
+      }
     } catch (Exception e) {
       throw new NotFoundException("존재하지 않는 파일 경로입니다.");
     }
+    return fileLocation;
   }
 }
