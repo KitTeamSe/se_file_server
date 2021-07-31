@@ -1,0 +1,54 @@
+server:
+  port: 8070
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: -1
+      max-request-size: -1
+  datasource:
+    url: jdbc:mysql://mysql-db:3306/test?serverTimezone=UTC&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    username: test
+    password: test
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    admin:
+      id: admin
+      password: $2a$10$OhHPNBcNrB/9OV/Tv6I.yOwZcL7byFgBGpve9XgoWrMAJLVbccKtG
+      name: admin
+      nickname: admin
+      studentId: 0
+      email: test@kumoh.ac.kr
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show-sql: true
+  security:
+    user:
+      name: test
+      password: test
+    anonymous:
+      id: 0
+      pw: ANM
+  jwt:
+    secret: se7540
+    default-group: ANONYMOUS
+    header: X-AUTH-TOKEN
+
+logging:
+  level:
+    org:
+      hibernate: info
+    com:
+      se:
+        se_file_server:
+          file: debug
+
+se-file-server:
+  upload-dir: C:\Users\Administrator\Desktop\attachment  # for windows
+  #  upload-dir: /var/se-file-server   # for linux
+  max-file-size : 500000000
+
+se-web-server:
+  file-dash-server-domain: http://file-dash.se-testboard.duckdns.org

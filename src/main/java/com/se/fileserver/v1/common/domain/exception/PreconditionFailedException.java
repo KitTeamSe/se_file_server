@@ -19,3 +19,4 @@ public class PreconditionFailedException extends SeException {
     super(HttpStatus.PRECONDITION_FAILED, cause);
   }
 }
+

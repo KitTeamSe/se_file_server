@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  app: &app
+    build:
+      context: .
+      target: build
+    image: se-file
+    volumes:
+      - .:/app
+    ports:
+      - 8070:8070
+    depends_on:
+      - mysql-db
+    networks:
+      - mysql-network
+    command: |
+      sh -c "./wait-for-it.sh mysql-db:3306 --
+             java -jar /run-se-file-server.jar --spring.config.location=./application.yml"
+
+  mysql-db:
+    image: mysql:5.7.33
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    volumes:
+      - .:/app
+    ports:
+      - 3306:3306
+    networks:
+      - mysql-network
+    platform: linux/x86_64 # for m1
+
+networks:
+  mysql-network:
