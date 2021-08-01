@@ -17,7 +17,7 @@ public class File extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Long fileId;
 
   @Size(max = 255)
   @Column(nullable = false, unique = true)

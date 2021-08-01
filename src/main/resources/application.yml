@@ -46,8 +46,8 @@ logging:
           file: debug
 
 se-file-server:
-  # upload-dir: C:\Users\Administrator\Desktop\attachment  # for windows
-  upload-dir: /var/se-file-server   # for linux
+  upload-dir: C:\Users\Administrator\Desktop\attachment  # for windows
+  #  upload-dir: /var/se-file-server   # for linux
   max-file-size: 500000000
 
 se-web-server:
