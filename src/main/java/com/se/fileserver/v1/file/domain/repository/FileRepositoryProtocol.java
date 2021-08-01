@@ -1,5 +1,10 @@
 package com.se.fileserver.v1.file.domain.repository;
 
+import com.se.fileserver.v1.file.domain.model.File;
+
 public interface FileRepositoryProtocol {
-  // TODO: 파일 태스크
+
+  File findBySaveName(String saveName);
+
+  void delete(File file);
 }

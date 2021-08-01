@@ -48,7 +48,7 @@ logging:
 se-file-server:
   upload-dir: C:\Users\Administrator\Desktop\attachment  # for windows
   #  upload-dir: /var/se-file-server   # for linux
-  max-file-size : 500000000
+  max-file-size: 500000000
 
 se-web-server:
   file-dash-server-domain: http://file-dash.se-testboard.duckdns.org
