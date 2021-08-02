@@ -5,6 +5,7 @@ import com.se.fileserver.v1.file.infra.repository.FileJpaRepository;
 import java.util.List;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Primary
@@ -22,10 +23,14 @@ public class FileRepository implements FileRepositoryProtocol{
     return jpa.saveAll(files);
   }
 
-//  @Override
-//  public Page<File> findAllByService(String service) {
-//    return jpa.findAllByService(service);
-//  }
+  @Override
+  public Page<File> findAll(Pageable pageable) {
+    return jpa.findAll(pageable);
+  }
 
+  @Override
+  public Page<File> findAllByService(Pageable pageable, String service) {
+    return jpa.findAllByService(pageable, service);
+  }
 
 }

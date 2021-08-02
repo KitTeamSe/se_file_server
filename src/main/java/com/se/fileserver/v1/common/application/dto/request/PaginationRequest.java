@@ -5,7 +5,9 @@ import javax.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -19,7 +21,19 @@ public class PaginationRequest<T> extends BaseRequest<T> {
   private int size;
   @ApiModelProperty(example = "ASC", notes = "정렬 방향")
   private Sort.Direction direction;
-  @ApiModelProperty(example = "ASC", notes = "정렬 기준")
+  @ApiModelProperty(example = "createdAt", notes = "정렬 기준")
   private String orderBy;
 
+  public PaginationRequest(T dto, int page, int size,
+      Direction direction, String orderBy) {
+    super(dto);
+    this.page = page;
+    this.size = size;
+    this.direction = direction;
+    this.orderBy = orderBy;
+  }
+
+  public PageRequest of(){
+    return PageRequest.of(this.page,this.size, this.direction, this.orderBy);
+  }
 }

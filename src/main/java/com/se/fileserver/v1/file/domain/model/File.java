@@ -60,4 +60,5 @@ public class File extends BaseEntity {
     this.size = size;
   }
 
+
 }
