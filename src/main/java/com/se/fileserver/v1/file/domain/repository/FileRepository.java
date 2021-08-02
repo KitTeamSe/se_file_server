@@ -2,7 +2,6 @@ package com.se.fileserver.v1.file.domain.repository;
 
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.infra.repository.FileJpaRepository;
-import org.springframework.context.annotation.Primary;
 import java.util.List;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -40,11 +39,6 @@ public class FileRepository implements FileRepositoryProtocol{
   @Override
   public Page<File> findAllByService(Pageable pageable, String service) {
     return jpa.findAllByService(pageable, service);
-  }
-
-  @Override
-  public File findByFileId(Long fileId) {
-    return jpa.findByFileId(fileId);
   }
 
 }

@@ -69,15 +69,15 @@ public class FileApiController {
 
   /* 파일 목록 조회 */
   @ApiOperation("파일 목록 조회")
-  @PostMapping("/file-list")
+  @PostMapping("/file/list")
   @ResponseStatus(value = HttpStatus.OK)
   public Response<Pageable> readFiles(@RequestBody PaginationRequest<FileReadRequestDto> request) {
     PageImpl fileEntityList = fileReadService.readAll(request);
     return filePresenterFormatter.readFiles(fileEntityList);
   }
 
-  // 파일 다운로드
-  @GetMapping("/{saveName:.+}")
+  /* 파일 다운로드 */
+  @GetMapping("file/{saveName:.+}")
   @ApiImplicitParam(name = "saveName", value = "저장된 파일 명")
   @ApiOperation(value = "파일 다운로드", notes = "파일 서버에 저장된 파일을 다운로드한다.")
   public ResponseEntity<Resource> downloadFile(@PathVariable String saveName) {
@@ -92,8 +92,8 @@ public class FileApiController {
   }
 
 
-  // 파일 삭제
-  @DeleteMapping("/{service}/{saveName:.+}")
+  /* 파일 삭제 */
+  @DeleteMapping("file/{service}/{saveName:.+}")
   @ApiOperation(value = "파일 삭제", notes = "파일 서버에 저장된 파일을 삭제한다.")
   @ApiImplicitParams({
       @ApiImplicitParam(name = "service", value = "서비스(se or pickple)"),
@@ -104,10 +104,4 @@ public class FileApiController {
     return filePresenterFormatter.deleteFile();
   }
 
-  /* 파일 id로 조회 */
-  @ApiOperation(value = "파일 조회 ")
-  @GetMapping("/file")
-  public Response<File> readFile(@RequestParam Long fileId) {
-    return new Response<>(HttpStatus.OK,"파일 조회 성공",fileReadService.read(fileId));
-  }
 }

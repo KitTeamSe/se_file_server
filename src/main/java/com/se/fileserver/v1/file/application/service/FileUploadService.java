@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,15 +58,14 @@ public class FileUploadService {
   /* 파일 객체 생성 */
   private File createFileEntity(MultipartFile multipartFile, Path targetLocation, String service) {
 
-    String fileType = getExtension(multipartFile);
+    String fileType = getMimeType(multipartFile);
     String originalName = multipartFile.getOriginalFilename();
     Long size = multipartFile.getSize();
     String saveName;
     Path storedLocation = targetLocation;
     do {
-      saveName = createSaveName(fileType);
+      saveName = createSaveName(getExtension(multipartFile));
     } while (isSameFileNameExists(storedLocation.resolve(saveName)));
-
     String downloadUri = createDownloadUri(saveName);
 
     File newFile = new File(
@@ -119,14 +119,23 @@ public class FileUploadService {
   }
 
   /* saveName : UUID.확장자 생성 */
-  private String createSaveName(String fileType) {
+  private String createSaveName(String extension) {
     return UUID.randomUUID().toString().replace("-", "")
-        + "." + fileType;
+        + "." + extension;
   }
 
   /* 확장자 추출 */
   private String getExtension(MultipartFile file) {
     return FilenameUtils.getExtension(file.getOriginalFilename());
+  }
+
+  /* MIME type 추출 */
+  private String getMimeType(MultipartFile file) {
+    try {
+      return new Tika().detect(file.getInputStream());
+    } catch (IOException e) {
+      throw new InvalidFileException("file mime type을 불러올 수 없습니다.");
+    }
   }
 
   /* 서버에 파일 저장 */
