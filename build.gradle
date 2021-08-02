@@ -13,6 +13,10 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.projectlombok:lombok:1.18.18'
+	annotationProcessor "org.projectlombok:lombok"
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
