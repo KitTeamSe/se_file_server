@@ -5,10 +5,11 @@ import static org.mockito.BDDMockito.given;
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.common.infra.security.config.WebSecurityConfig;
 import com.se.fileserver.v1.common.infra.security.provider.JwtTokenResolver;
-import com.se.fileserver.v1.file.adapter.controller.FileController;
-import com.se.fileserver.v1.file.adapter.presenter.FilePresenter;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
+import com.se.fileserver.v1.file.application.service.FileDeleteService;
 import com.se.fileserver.v1.file.application.service.FileDownloadService;
+import com.se.fileserver.v1.file.presentation.controller.FileController;
+import com.se.fileserver.v1.file.presentation.presenter.FilePresenter;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +47,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FileDownloadServiceTest {
 
   private MockMvc mockMvc;
+
+  @MockBean
+  private FileDeleteService fileDeleteService;
 
   @MockBean
   private FileDownloadService fileDownloadService;
