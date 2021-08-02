@@ -2,6 +2,7 @@ package com.se.fileserver.v1.file.domain.repository;
 
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.infra.repository.FileJpaRepository;
+import org.springframework.context.annotation.Primary;
 import java.util.List;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,14 @@ public class FileRepository implements FileRepositoryProtocol{
   }
 
   @Override
+  public File findBySaveName(String saveName) {
+    return jpa.findBySaveName(saveName);
+  }
+
+  @Override
+  public void delete(File file) {
+    jpa.delete(file);
+  }
   public List<File> saveAll(List<File> files) {
     return jpa.saveAll(files);
   }

@@ -19,3 +19,4 @@ public class PermissionDeniedException extends SeException {
     super(HttpStatus.FORBIDDEN, cause);
   }
 }
+

@@ -3,8 +3,7 @@ package com.se.fileserver.v1.common.domain.exception;
 import org.springframework.http.HttpStatus;
 
 /**
- * 입력값이 잘못된 경우 발생하는 예외.
- * 메시지에 이유를 포함하여 반환하기 바람니다.
+ * 클라이언트가 요청한 리소스가 존재하지 않을 때 발생하는 예외.
  */
 public class InvalidInputException extends SeException {
 

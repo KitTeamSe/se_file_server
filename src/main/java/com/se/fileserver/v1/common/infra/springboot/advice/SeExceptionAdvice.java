@@ -1,9 +1,8 @@
 package com.se.fileserver.v1.common.infra.springboot.advice;
 
-
-import com.se.fileserver.v1.common.application.dto.ExceptionResponse;
 import com.se.fileserver.v1.common.domain.exception.PreconditionFailedException;
 import com.se.fileserver.v1.common.domain.exception.SeException;
+import com.se.fileserver.v1.common.presentation.response.ExceptionResponse;
 import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-//TODO : 에러 컨벤션 확보 필요
 @RestControllerAdvice
 public class SeExceptionAdvice {
 
@@ -42,10 +40,10 @@ public class SeExceptionAdvice {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<PreconditionFailedException> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+  public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
     this.countExceptionAndLog(e);
     return new ResponseEntity<>(
-        new PreconditionFailedException(e.getMessage(), e),
+        ExceptionResponse.of(e, e.getBindingResult()),
         HttpStatus.PRECONDITION_FAILED
     );
   }

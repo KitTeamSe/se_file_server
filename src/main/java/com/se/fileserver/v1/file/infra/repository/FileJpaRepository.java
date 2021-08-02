@@ -5,7 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface FileJpaRepository extends JpaRepository<File,Long> {
+
+public interface FileJpaRepository extends JpaRepository<File,Long>, FileRepositoryProtocol {
+  File findBySaveName(String saveName);
+  void delete(File file);
   Page<File> findAll(Pageable pageable);
   Page<File> findAllByService(Pageable pageable, String service);
 }
