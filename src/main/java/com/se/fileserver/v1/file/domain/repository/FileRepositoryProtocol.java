@@ -11,4 +11,5 @@ public interface FileRepositoryProtocol {
   List<File> saveAll(List<File> files);
   Page<File> findAll(Pageable pageable);
   Page<File> findAllByService(Pageable pageable, String service);
+  File findByFileId(Long fileId);
 }

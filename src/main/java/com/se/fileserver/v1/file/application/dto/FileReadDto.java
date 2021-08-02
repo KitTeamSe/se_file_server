@@ -1,14 +1,12 @@
 package com.se.fileserver.v1.file.application.dto;
 
 import com.se.fileserver.v1.file.domain.model.File;
-import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Builder
 public class FileReadDto {
 
@@ -32,13 +30,15 @@ public class FileReadDto {
   }
 
   public static FileReadDto to(File file) {
-    return new FileReadDto(
-        file.getFileId(),
-        file.getDownloadUrl(),
-        file.getService(),
-        file.getFileType(),
-        file.getOriginalName(),
-        file.getSaveName(),
-        file.getSize());
+    return builder()
+        .fileId(file.getFileId())
+        .downloadUrl(file.getDownloadUrl())
+        .service(file.getService())
+        .fileType(file.getFileType())
+        .originalName(file.getOriginalName())
+        .saveName(file.getSaveName())
+        .size(file.getSize())
+
+        .build();
   }
 }

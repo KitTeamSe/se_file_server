@@ -1,6 +1,8 @@
 package com.se.fileserver.v1.application.service;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.common.infra.security.config.WebSecurityConfig;
@@ -8,7 +10,7 @@ import com.se.fileserver.v1.common.infra.security.provider.JwtTokenResolver;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.application.service.FileDeleteService;
 import com.se.fileserver.v1.file.application.service.FileDownloadService;
-import com.se.fileserver.v1.file.presentation.controller.FileController;
+import com.se.fileserver.v1.file.presentation.controller.FileApiController;
 import com.se.fileserver.v1.file.presentation.presenter.FilePresenter;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -29,19 +31,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
-import org.springframework.http.MediaType;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 /*
 지정한 파일과 데이터가 존재할 때 테스트 통과 가능
 */
 
-@WebMvcTest(value = FileController.class, excludeFilters = {
+@WebMvcTest(value = FileApiController.class, excludeFilters = {
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
 })
 public class FileDownloadServiceTest {

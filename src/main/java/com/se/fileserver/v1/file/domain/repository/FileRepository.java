@@ -42,4 +42,9 @@ public class FileRepository implements FileRepositoryProtocol{
     return jpa.findAllByService(pageable, service);
   }
 
+  @Override
+  public File findByFileId(Long fileId) {
+    return jpa.findByFileId(fileId);
+  }
+
 }

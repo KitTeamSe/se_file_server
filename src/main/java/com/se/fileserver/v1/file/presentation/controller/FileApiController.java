@@ -1,25 +1,31 @@
-package com.se.fileserver.v1.file.adapter.controller;
+package com.se.fileserver.v1.file.presentation.controller;
 
 import com.se.fileserver.v1.common.application.dto.request.PaginationRequest;
+import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.common.presentation.response.Response;
 import com.se.fileserver.v1.file.application.dto.FileCreateDto;
-import com.se.fileserver.v1.file.application.dto.FileReadDto;
-//import com.se.fileserver.v1.file.application.service.FileReadService;
+import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.application.dto.request.FileReadRequestDto;
+import com.se.fileserver.v1.file.application.service.FileDeleteService;
+import com.se.fileserver.v1.file.application.service.FileDownloadService;
 import com.se.fileserver.v1.file.application.service.FileReadService;
 import com.se.fileserver.v1.file.application.service.FileUploadService;
 import com.se.fileserver.v1.file.domain.model.File;
-import com.se.fileserver.v1.file.presentation.FilePresenterFormatter;
+import com.se.fileserver.v1.file.presentation.presenter.FilePresenterFormatter;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.validation.constraints.NotNull;
-import org.springframework.data.domain.Page;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,14 +41,20 @@ public class FileApiController {
 
   private final FileUploadService fileUploadService;
   private final FileReadService fileReadService;
+  private final FileDownloadService fileDownloadService;
+  private final FileDeleteService fileDeleteService;
   private final FilePresenterFormatter filePresenterFormatter;
 
   public FileApiController(
       FileUploadService fileUploadService,
       FileReadService fileReadService,
+      FileDownloadService fileDownloadService,
+      FileDeleteService fileDeleteService,
       FilePresenterFormatter filePresenterFormatter) {
     this.fileUploadService = fileUploadService;
     this.fileReadService = fileReadService;
+    this.fileDownloadService = fileDownloadService;
+    this.fileDeleteService = fileDeleteService;
     this.filePresenterFormatter = filePresenterFormatter;
   }
 
@@ -64,4 +76,38 @@ public class FileApiController {
     return filePresenterFormatter.readFiles(fileEntityList);
   }
 
+  // 파일 다운로드
+  @GetMapping("/{saveName:.+}")
+  @ApiImplicitParam(name = "saveName", value = "저장된 파일 명")
+  @ApiOperation(value = "파일 다운로드", notes = "파일 서버에 저장된 파일을 다운로드한다.")
+  public ResponseEntity<Resource> downloadFile(@PathVariable String saveName) {
+    // Load file as Resource
+    FileDownloadDto fileDownloadDto = fileDownloadService.downloadFile(saveName);
+
+    if (fileDownloadDto == null) {
+      throw new NotFoundException("파일이 존재하지 않습니다.");
+    }
+
+    return filePresenterFormatter.downloadFile(fileDownloadDto);
+  }
+
+
+  // 파일 삭제
+  @DeleteMapping("/{service}/{saveName:.+}")
+  @ApiOperation(value = "파일 삭제", notes = "파일 서버에 저장된 파일을 삭제한다.")
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "service", value = "서비스(se or pickple)"),
+      @ApiImplicitParam(name = "saveName", value = "저장된 파일 명")
+  })
+  public Response<String> deleteFile(@PathVariable String service, @PathVariable String saveName) {
+    fileDeleteService.deleteFile(service, saveName);
+    return filePresenterFormatter.deleteFile();
+  }
+
+  /* 파일 id로 조회 */
+  @ApiOperation(value = "파일 조회 ")
+  @GetMapping("/file")
+  public Response<File> readFile(@RequestParam Long fileId) {
+    return new Response<>(HttpStatus.OK,"파일 조회 성공",fileReadService.read(fileId));
+  }
 }

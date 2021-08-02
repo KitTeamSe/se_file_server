@@ -7,10 +7,14 @@ spring:
       max-file-size: -1
       max-request-size: -1
   datasource:
-    url: jdbc:mysql://mysql-db:3306/test?serverTimezone=UTC&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
-    username: test
-    password: test
-    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://mysql-db:3306/test?serverTimezone=UTC&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+#    username: test
+#    password: test
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:h2:tcp://localhost/~/test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
     admin:
       id: admin
       password: $2a$10$OhHPNBcNrB/9OV/Tv6I.yOwZcL7byFgBGpve9XgoWrMAJLVbccKtG
@@ -46,8 +50,9 @@ logging:
           file: debug
 
 se-file-server:
-  upload-dir: C:\Users\Administrator\Desktop\attachment  # for windows
+  # upload-dir: C:\Users\Administrator\Desktop\attachment  # for windows
   #  upload-dir: /var/se-file-server   # for linux
+  upload-dir: /Users/leejiwoo/Desktop/workspace/se/file
   max-file-size: 500000000
 
 se-web-server:

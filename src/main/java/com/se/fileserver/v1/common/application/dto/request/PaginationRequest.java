@@ -33,6 +33,6 @@ public class PaginationRequest<T> extends BaseRequest<T> {
   }
 
   public PageRequest of(){
-    return PageRequest.of(this.page,this.size, this.direction, this.orderBy);
+    return PageRequest.of(this.page, this.size, this.direction, this.orderBy);
   }
 }

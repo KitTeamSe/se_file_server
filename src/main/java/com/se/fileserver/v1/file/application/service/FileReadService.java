@@ -5,6 +5,7 @@ import com.se.fileserver.v1.file.application.dto.FileReadDto;
 import com.se.fileserver.v1.file.application.dto.request.FileReadRequestDto;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.domain.repository.FileRepository;
+import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FileReadService {
 
-  private final FileRepository fileRepository;
+  private final FileRepositoryProtocol fileRepository;
 
   public FileReadService(FileRepository fileRepository) {
     this.fileRepository = fileRepository;
@@ -36,17 +37,21 @@ public class FileReadService {
       filePage = fileRepository.findAllByService(request.of(), request.getDto().getService());
     }
     System.out.println(filePage.getTotalElements());
+    System.out.println(filePage.getContent().size());
 
     List<FileReadDto> fileList = filePage
-        .get()
-        .map(file -> {
-          System.out.println(file.getDownloadUrl());
-          return FileReadDto.to(file);
-        })
+        .getContent().stream()
+        .map(file -> FileReadDto.to(file))
         .collect(Collectors.toList());
+
+    //List<File> fileList = filePage.getContent();
 
     System.out.println(fileList.size());
     return new PageImpl(fileList, filePage.getPageable(), filePage.getTotalElements());
+  }
+
+  public File read(Long fileId) {
+    return fileRepository.findByFileId(fileId);
   }
 
 }
