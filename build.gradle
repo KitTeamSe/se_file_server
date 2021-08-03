@@ -46,7 +46,6 @@ dependencies {
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	annotationProcessor 'org.projectlombok:lombok:1.18.6'
 	compileOnly 'org.projectlombok:lombok:1.18.6'
-	compileOnly 'org.apache.tika:tika-parsers:1.20'
 
 }
 

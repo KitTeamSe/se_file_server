@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.apache.commons.io.FilenameUtils;
-
-import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,11 +147,9 @@ public class FileUploadService {
 
   /* MIME type 추출 */
   private String getMimeType(MultipartFile file) {
-    try {
-      return new Tika().detect(file.getInputStream());
-    } catch (IOException e) {
-      throw new InvalidFileException("file mime type을 불러올 수 없습니다.");
-    }
+    String content = file.getContentType();
+    if (content == null) return "application/octet-stream";
+    return content;
   }
 
   /* 서버에 파일 저장 */
