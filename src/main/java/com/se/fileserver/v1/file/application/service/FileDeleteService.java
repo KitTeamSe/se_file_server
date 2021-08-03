@@ -28,9 +28,10 @@ public class FileDeleteService {
 
     Path filePath = this.fileLocation.resolve(service).resolve(saveName).normalize();
     java.io.File file = new java.io.File(filePath.toString());
-    File fileModel = fileRepositoryProtocol.findBySaveName(saveName);
+    File fileModel = fileRepositoryProtocol.findBySaveName(saveName)
+        .orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
 
-    if (!file.exists() || fileModel == null) {
+    if (!file.exists()) {
       throw new NotFoundException("존재하지 않는 파일입니다.");
     }
 

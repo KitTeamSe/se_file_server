@@ -81,7 +81,11 @@ public class FileUploadService {
     Path storedLocation = targetLocation;
     do {
       saveName = createSaveName(getExtension(multipartFile));
-    } while (isSameFileNameExists(storedLocation.resolve(saveName)));
+    } while (isSameSaveNameExistsInStorage(saveName));
+    while (isSameFileNameExists(storedLocation.resolve(saveName))) {
+      saveName = createSaveName(getExtension(multipartFile));
+    }
+
     String downloadUri = createDownloadUri(saveName);
 
     File newFile = new File(
@@ -125,11 +129,14 @@ public class FileUploadService {
     return Files.exists(targetLocation);
   }
 
+  private boolean isSameSaveNameExistsInStorage(String saveName) {
+    return fileRepository.findBySaveName(saveName).isPresent();
+  }
+
   /* Download 'uri' 생성 */
   private String createDownloadUri(String saveName) {
     return ServletUriComponentsBuilder.fromCurrentContextPath()
         .path("/file/")
-        .path("/download/")
         .path(saveName)
         .toUriString();
   }
@@ -171,7 +178,6 @@ public class FileUploadService {
       e.printStackTrace();
       System.out.println("디렉토리 생성 오류");
     }
-
     return targetLocation;
   }
 }

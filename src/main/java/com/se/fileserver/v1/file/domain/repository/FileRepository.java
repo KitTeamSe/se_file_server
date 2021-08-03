@@ -3,6 +3,7 @@ package com.se.fileserver.v1.file.domain.repository;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.infra.repository.FileJpaRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,7 @@ public class FileRepository implements FileRepositoryProtocol{
   }
 
   @Override
-  public File findBySaveName(String saveName) {
+  public Optional<File> findBySaveName(String saveName) {
     return jpa.findBySaveName(saveName);
   }
 
