@@ -6,6 +6,7 @@ import com.se.fileserver.v1.common.presentation.response.ExceptionResponse;
 import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,21 +32,21 @@ public class SeExceptionAdvice {
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<PreconditionFailedException> handleConstraintViolation(final ConstraintViolationException e) {
+  public ResponseEntity<ExceptionResponse> handleConstraintViolation(final ConstraintViolationException e) {
     this.countExceptionAndLog(e);
-    return new ResponseEntity<>(
-        new PreconditionFailedException(e.getMessage(), e),
-        HttpStatus.PRECONDITION_FAILED
-    );
+    return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.PRECONDITION_FAILED);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
     this.countExceptionAndLog(e);
-    return new ResponseEntity<>(
-        ExceptionResponse.of(e, e.getBindingResult()),
-        HttpStatus.PRECONDITION_FAILED
-    );
+    return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.PRECONDITION_FAILED);
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ExceptionResponse> handleAccessDeniedException(final AccessDeniedException e) {
+    this.countExceptionAndLog(e);
+    return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.UNAUTHORIZED);
   }
 
   private void countExceptionAndLog(final Exception e) {
