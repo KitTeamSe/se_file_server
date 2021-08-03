@@ -81,7 +81,7 @@ public class FileUploadService {
     Path storedLocation = targetLocation;
     do {
       saveName = createSaveName(getExtension(multipartFile));
-    } while (isSameSaveNameExistsInStorage(saveName) || isSameFileNameExists(storedLocation.resolve(saveName)));
+    } while (isSameSaveNameExistsInRepository(saveName) || isSameSaveNameExistsInStorage(storedLocation.resolve(saveName)));
 
     String downloadUri = createDownloadUri(saveName);
 
@@ -122,11 +122,12 @@ public class FileUploadService {
   }
 
   /* 서버에 저장될 파일명 검증 */
-  private boolean isSameFileNameExists(Path targetLocation) {
+  /* -- Storage : 파일서버의 저장공간 */
+  private boolean isSameSaveNameExistsInStorage(Path targetLocation) {
     return Files.exists(targetLocation);
   }
-
-  private boolean isSameSaveNameExistsInStorage(String saveName) {
+  /* -- Repository : DataBase */
+  private boolean isSameSaveNameExistsInRepository(String saveName) {
     return fileRepository.findBySaveName(saveName).isPresent();
   }
 
