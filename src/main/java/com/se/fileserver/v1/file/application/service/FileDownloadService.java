@@ -44,11 +44,8 @@ public class FileDownloadService {
   public FileDownloadDto downloadFile(String saveName) {
     checkFileLocationExists();
 
-    File file = fileRepositoryProtocol.findBySaveName(saveName);
-
-    if (file == null) {
-      throw new NotFoundException("존재하지 않는 파일입니다.");
-    }
+    File file = fileRepositoryProtocol.findBySaveName(saveName)
+        .orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
 
     Path filePath = this.fileLocation.resolve(file.getService()).resolve(saveName).normalize();
     Resource resource = setResource(filePath);

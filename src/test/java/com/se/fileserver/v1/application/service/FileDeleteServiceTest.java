@@ -8,6 +8,7 @@ import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.file.application.service.FileDeleteService;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -37,7 +38,7 @@ public class FileDeleteServiceTest {
     Long size = 1L;
 
     File file = new File(downloadUrl, service, fileType, originalName, saveName, size);
-    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(file);
+    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(Optional.of(file));
     willDoNothing().given(fileRepositoryProtocol).delete(file);
 
     try {
@@ -61,7 +62,7 @@ public class FileDeleteServiceTest {
     Long size = 1L;
 
     File file = new File(downloadUrl, service, fileType, originalName, saveName, size);
-    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(file);
+    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(Optional.of(file));
     willDoNothing().given(fileRepositoryProtocol).delete(file);
 
     try {
@@ -99,7 +100,7 @@ public class FileDeleteServiceTest {
     Long size = 1L;
 
     File file = new File(downloadUrl, service, fileType, originalName, saveName, size);
-    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(file);
+    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(Optional.of(file));
     willDoNothing().given(fileRepositoryProtocol).delete(file);
 
     try {

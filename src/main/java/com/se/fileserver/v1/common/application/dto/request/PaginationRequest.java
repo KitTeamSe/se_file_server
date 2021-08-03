@@ -2,12 +2,15 @@ package com.se.fileserver.v1.common.application.dto.request;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Min;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class PaginationRequest<T> extends BaseRequest<T> {
   @ApiModelProperty(example = "1", notes = "페이지, 1 이상만 가능")
   @Min(value = 1)
@@ -20,9 +23,6 @@ public class PaginationRequest<T> extends BaseRequest<T> {
   @ApiModelProperty(example = "id", notes = "정렬 기준")
   private String orderBy;
 
-  public PaginationRequest() {
-  }
-
   public PaginationRequest(T dto, int page, int size,
       Direction direction, String orderBy) {
     super(dto);
@@ -33,6 +33,6 @@ public class PaginationRequest<T> extends BaseRequest<T> {
   }
 
   public PageRequest of(){
-    return PageRequest.of(this.page,this.size, this.direction, this.orderBy);
+    return PageRequest.of(this.page, this.size, this.direction, this.orderBy);
   }
 }

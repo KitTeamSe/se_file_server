@@ -6,15 +6,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "attachment")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class File extends BaseEntity {
   // TODO: 파일 태스크
-  // 저장 디렉토리 -> c:/file/se/
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long fileId;
@@ -25,7 +29,7 @@ public class File extends BaseEntity {
 
   @Size(min = 2, max = 40)
   @Column(nullable = false)
-  private String service;     // se/ pickple/ ..
+  private String service;
 
   @Size(min = 2, max = 40)
   @Column(nullable = false)
@@ -42,9 +46,7 @@ public class File extends BaseEntity {
   @Column(nullable = false)
   private Long size;
 
-  /* constructor */
-  protected File() {}
-
+  @Builder
   public File(@Size(max = 255) String downloadUrl,
       @Size(min = 2, max = 40) String service,
       @Size(min = 2, max = 40) String fileType,
@@ -57,4 +59,5 @@ public class File extends BaseEntity {
     this.saveName = saveName;
     this.size = size;
   }
+
 }
