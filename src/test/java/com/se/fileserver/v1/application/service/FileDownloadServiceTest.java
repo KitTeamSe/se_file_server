@@ -30,7 +30,7 @@ import org.springframework.core.io.UrlResource;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class FileDownloadServiceTest {
 
-  private String directory = "C:\\Users\\Administrator\\Desktop\\attachment";
+  private String directory = "C:\\Users\\Samsung\\Desktop\\SE 리뉴얼\\file";
 
   @Mock
   private FileRepositoryProtocol fileRepositoryProtocol;
@@ -47,7 +47,7 @@ public class FileDownloadServiceTest {
 
     File file = new File(downloadUrl, service, fileType, originalName, saveName, size);
     given(fileRepositoryProtocol.save(file)).willReturn(file);
-    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(file);
+    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(java.util.Optional.of(file));
 
     FileInputStream inputStream = new FileInputStream(sourceLocation);
     Path fileLocation = Paths.get(this.directory).toAbsolutePath().normalize().resolve(service);
@@ -68,7 +68,7 @@ public class FileDownloadServiceTest {
     String service = "se";
     String originalName = "페페.jpg";
     setUp(saveName, service, originalName);
-    File file = fileRepositoryProtocol.findBySaveName(saveName);
+    File file = fileRepositoryProtocol.findBySaveName(saveName).orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
     Path filePath = Paths.get(directory).resolve(file.getService()).resolve(saveName);
     Resource resource = new UrlResource(filePath.toUri());
 
@@ -92,7 +92,7 @@ public class FileDownloadServiceTest {
     String originalFileName = "한글.hwp";
     String saveName = "han.hwp";
     setUp(saveName, service, originalFileName);
-    File file = fileRepositoryProtocol.findBySaveName(saveName);
+    File file = fileRepositoryProtocol.findBySaveName(saveName).orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
     Path filePath = Paths.get(directory).resolve(file.getService()).resolve(saveName);
     Resource resource = new UrlResource(filePath.toUri());
 

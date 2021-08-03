@@ -41,7 +41,7 @@ public class FileDeleteServiceTest {
 
     File file = new File(downloadUrl, service, fileType, originalName, saveName, size);
     given(fileRepositoryProtocol.save(file)).willReturn(file);
-    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(file);
+    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(java.util.Optional.of(file));
 
     FileInputStream inputStream = new FileInputStream(sourceLocation);
     Path fileLocation = Paths.get(this.directory).toAbsolutePath().normalize().resolve(service);
