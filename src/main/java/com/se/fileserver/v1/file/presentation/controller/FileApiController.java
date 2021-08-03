@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,6 +79,7 @@ public class FileApiController {
   /* 파일 목록 조회 */
   @ApiOperation("파일 목록 조회")
   @PostMapping("/file-list")
+  @PreAuthorize("hasAuthority('SYSTEM')")
   @ResponseStatus(value = HttpStatus.OK)
   public Response<Pageable> readFiles(@RequestBody PaginationRequest<FileReadRequestDto> request) {
     PageImpl fileEntityList = fileReadService.readAll(request);
