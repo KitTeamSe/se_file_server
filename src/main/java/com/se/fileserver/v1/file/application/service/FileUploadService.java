@@ -81,10 +81,7 @@ public class FileUploadService {
     Path storedLocation = targetLocation;
     do {
       saveName = createSaveName(getExtension(multipartFile));
-    } while (isSameSaveNameExistsInStorage(saveName));
-    while (isSameFileNameExists(storedLocation.resolve(saveName))) {
-      saveName = createSaveName(getExtension(multipartFile));
-    }
+    } while (isSameSaveNameExistsInStorage(saveName) || isSameFileNameExists(storedLocation.resolve(saveName)));
 
     String downloadUri = createDownloadUri(saveName);
 
