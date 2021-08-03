@@ -24,4 +24,9 @@ public class FileRepository implements FileRepositoryProtocol{
   public void delete(File file) {
     jpa.delete(file);
   }
+
+  @Override
+  public File save(File file) {
+    return jpa.save(file);
+  }
 }

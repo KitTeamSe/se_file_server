@@ -1,299 +1,172 @@
 package com.se.fileserver.v1.application.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.BDDMockito.given;
 
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
-import com.se.fileserver.v1.common.infra.security.config.WebSecurityConfig;
-import com.se.fileserver.v1.common.infra.security.provider.JwtTokenResolver;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
-import com.se.fileserver.v1.file.application.service.FileDeleteService;
 import com.se.fileserver.v1.file.application.service.FileDownloadService;
-import com.se.fileserver.v1.file.presentation.controller.FileController;
-import com.se.fileserver.v1.file.presentation.presenter.FilePresenter;
-import java.net.MalformedURLException;
+import com.se.fileserver.v1.file.domain.model.File;
+import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.security.access.SecurityConfig;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
-import org.springframework.http.MediaType;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-/*
-지정한 파일과 데이터가 존재할 때 테스트 통과 가능
-*/
-
-@WebMvcTest(value = FileController.class, excludeFilters = {
-    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
-})
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class FileDownloadServiceTest {
 
-  private MockMvc mockMvc;
+  private String directory = "C:\\Users\\Administrator\\Desktop\\attachment";
 
-  @MockBean
-  private FileDeleteService fileDeleteService;
+  @Mock
+  private FileRepositoryProtocol fileRepositoryProtocol;
 
-  @MockBean
   private FileDownloadService fileDownloadService;
 
-  @MockBean
-  private FilePresenter filePresenter;
+  void setUp(String saveName, String service, String originalName) throws IOException {
+    String sourceLocation =
+        "src\\test\\java\\com\\se\\fileserver\\v1\\application\\service\\file\\" + originalName;
+    String downloadUrl = "http://localhost:8070/file-server/v1/file/" + saveName;
+    String fileType = Files
+        .probeContentType(Paths.get(sourceLocation).toAbsolutePath().normalize());
+    Long size = 1L;
 
-  // Spring Security 관련
-  @MockBean
-  private JwtTokenResolver JwtTokenResolver;
+    File file = new File(downloadUrl, service, fileType, originalName, saveName, size);
+    given(fileRepositoryProtocol.save(file)).willReturn(file);
+    given(fileRepositoryProtocol.findBySaveName(saveName)).willReturn(file);
 
-  @Autowired
-  private WebSecurityConfig webSecurityConfig;
+    FileInputStream inputStream = new FileInputStream(sourceLocation);
+    Path fileLocation = Paths.get(this.directory).toAbsolutePath().normalize().resolve(service);
 
-  @Autowired
-  private WebApplicationContext webApplicationContext;
+    java.io.File folder = new java.io.File(fileLocation.toString());
+    if (!folder.exists()) {
+      folder.mkdir();
+    }
 
-  @Value("${se-file-server.upload-dir}")
-  String directory;
+    Files.copy(inputStream, fileLocation.resolve(saveName), StandardCopyOption.REPLACE_EXISTING);
+  }
 
   @Test
-  void PNG_파일_다운로드_성공() throws Exception {
+  void JPG_파일_다운로드_성공() throws IOException, InterruptedException {
     // given
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    String originalFileName = "PNG_FILE.png";
-    String fileName = "teamlog.png";
-    Path fileLocation = Paths.get(directory).toAbsolutePath().normalize();
-    Path filePath = fileLocation.resolve("se").resolve(fileName).normalize();
+    fileDownloadService = new FileDownloadService(directory, fileRepositoryProtocol);
+    String saveName = "pepe.jpg";
+    String service = "se";
+    String originalName = "페페.jpg";
+    setUp(saveName, service, originalName);
+    File file = fileRepositoryProtocol.findBySaveName(saveName);
+    Path filePath = Paths.get(directory).resolve(file.getService()).resolve(saveName);
     Resource resource = new UrlResource(filePath.toUri());
-    String fileType = "image/png";
-
-    FileDownloadDto fileDownloadDto = FileDownloadDto.builder()
-        .originalName(originalFileName)
-        .resource(resource)
-        .fileType(fileType)
-        .build();
-    given(fileDownloadService.downloadFile(fileName)).willReturn(fileDownloadDto);
 
     // when
-    final ResultActions actions = mockMvc.perform(
-        get("/file-server/v1/" + fileName)
-    );
+    Thread.sleep(4000);
+    FileDownloadDto fileDownloadDto = fileDownloadService.downloadFile(saveName);
 
     // then
-//    actions.andExpect(status().isOk())
-//        .andExpect(content().contentType(MediaType.IMAGE_PNG))
-//        .andDo(print());
+    assertThat(fileDownloadDto.getFileType(), is("image/jpeg"));
+    assertThat(fileDownloadDto.getOriginalName(),
+        is(new String("페페.jpg".getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1)));
+    assertThat(fileDownloadDto.getResource(),
+        is(resource));
   }
 
   @Test
-  void JPEG_파일_다운로드_성공() throws Exception {
+  void HWP_파일_다운로드_성공() throws IOException, InterruptedException {
     // given
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    String originalFileName = "JPG_FILE.JPG";
-    String fileName = "cat.JPG";
-    Path fileLocation = Paths.get(directory).toAbsolutePath().normalize();
-    Path filePath = fileLocation.resolve("se").resolve(fileName).normalize();
+    fileDownloadService = new FileDownloadService(directory, fileRepositoryProtocol);
+    String service = "se";
+    String originalFileName = "한글.hwp";
+    String saveName = "han.hwp";
+    setUp(saveName, service, originalFileName);
+    File file = fileRepositoryProtocol.findBySaveName(saveName);
+    Path filePath = Paths.get(directory).resolve(file.getService()).resolve(saveName);
     Resource resource = new UrlResource(filePath.toUri());
-    String fileType = "image/jpeg";
-
-    FileDownloadDto fileDownloadDto = FileDownloadDto.builder()
-        .originalName(originalFileName)
-        .resource(resource)
-        .fileType(fileType)
-        .build();
-    given(fileDownloadService.downloadFile(fileName)).willReturn(fileDownloadDto);
 
     // when
-    final ResultActions actions = mockMvc.perform(
-        get("/file-server/v1/" + fileName)
-    );
+    Thread.sleep(4000);
+    FileDownloadDto fileDownloadDto = fileDownloadService.downloadFile(saveName);
 
     // then
-//    actions.andExpect(status().isOk())
-//        .andExpect(content().contentType(MediaType.IMAGE_JPEG))
-//        .andDo(print());
+    assertThat(fileDownloadDto.getFileType(), is("application/haansofthwp"));
+    assertThat(fileDownloadDto.getOriginalName(),
+        is(new String("한글.hwp".getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1)));
+    assertThat(fileDownloadDto.getResource(),
+        is(resource));
   }
 
   @Test
-  void WORD_다운로드_성공() throws Exception {
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    String originalFileName = "WORD_FILE.docx";
-    String fileName = "intro.docx";
-    Path fileLocation = Paths.get(directory).toAbsolutePath().normalize();
-    Path filePath = fileLocation.resolve("se").resolve(fileName).normalize();
-    Resource resource = new UrlResource(filePath.toUri());
-    String fileType = "application/msword";
-
-    FileDownloadDto fileDownloadDto = FileDownloadDto.builder()
-        .originalName(originalFileName)
-        .resource(resource)
-        .fileType(fileType)
-        .build();
-    given(fileDownloadService.downloadFile(fileName)).willReturn(fileDownloadDto);
-
-    // when
-    final ResultActions actions = mockMvc.perform(
-        get("/file-server/v1/" + fileName)
-    );
-
-    // then
-//    actions.andExpect(status().isOk())
-//        .andExpect(content().contentType(MediaType.parseMediaType("application/msword")))
-//        .andDo(print());
-  }
-
-  @Test
-  void 한글_다운로드_성공() throws Exception {
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    String originalFileName = "HWP_FILE.hwp";
-    String fileName = "intro.hwp";
-    Path fileLocation = Paths.get(directory).toAbsolutePath().normalize();
-    Path filePath = fileLocation.resolve("se").resolve(fileName).normalize();
-    Resource resource = new UrlResource(filePath.toUri());
-    String fileType = "application/hansofthwp";
-
-    FileDownloadDto fileDownloadDto = FileDownloadDto.builder()
-        .originalName(originalFileName)
-        .resource(resource)
-        .fileType(fileType)
-        .build();
-    given(fileDownloadService.downloadFile(fileName)).willReturn(fileDownloadDto);
-
-    // when
-    final ResultActions actions = mockMvc.perform(
-        get("/file-server/v1/" + fileName)
-    );
-
-    // then
-//    actions.andExpect(status().isOk())
-//        .andExpect(content().contentType(MediaType.parseMediaType("application/hansofthwp")))
-//        .andDo(print());
-  }
-
-  @Test
-  void MP4_다운로드_성공() throws Exception {
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    String originalFileName = "엠피포.mp4";
-    String fileName = "v.mp4";
-    Path fileLocation = Paths.get(directory).toAbsolutePath().normalize();
-    Path filePath = fileLocation.resolve("se").resolve(fileName).normalize();
-    Resource resource = new UrlResource(filePath.toUri());
-    String fileType = "vedio/mp4";
-
-    FileDownloadDto fileDownloadDto = FileDownloadDto.builder()
-        .originalName(originalFileName)
-        .resource(resource)
-        .fileType(fileType)
-        .build();
-    given(fileDownloadService.downloadFile(fileName)).willReturn(fileDownloadDto);
-
-    // when
-    final ResultActions actions = mockMvc.perform(
-        get("/file-server/v1/" + fileName)
-    );
-
-    // then
-//    actions.andExpect(status().isOk())
-//        .andExpect(content().contentType(MediaType.parseMediaType(fileType)))
-//        .andDo(print());
-  }
-
-  @Test
-  void GIF_다운로드_성공() throws Exception {
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    String originalFileName = "GIF_FILE.gif";
-    String fileName = "sofa.gif";
-    Path fileLocation = Paths.get(directory).toAbsolutePath().normalize();
-    Path filePath = fileLocation.resolve("se").resolve(fileName).normalize();
-    Resource resource = new UrlResource(filePath.toUri());
-    String fileType = "image/gif";
-
-    FileDownloadDto fileDownloadDto = FileDownloadDto.builder()
-        .originalName(originalFileName)
-        .resource(resource)
-        .fileType(fileType)
-        .build();
-    given(fileDownloadService.downloadFile(fileName)).willReturn(fileDownloadDto);
-
-    // when
-    final ResultActions actions = mockMvc.perform(
-        get("/file-server/v1/" + fileName)
-    );
-
-    // then
-//    actions.andExpect(status().isOk())
-//        .andExpect(content().contentType(MediaType.IMAGE_GIF))
-//        .andDo(print());
-  }
-
-  @Test
-  void 존재하지_않는_파일() throws Exception {
+  void 존재하지_않는_파일() throws IOException {
     // given
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-        .addFilters(new CharacterEncodingFilter("UTF-8", true)).alwaysDo(print()).build();
-    String originalFileName = "파일.png";
-    // DB의 save_name
-    String fileName = "teamlog.png";
-    // 존재하지 않는 파일의 이름
-    String notExistentFile = "teamlog2.png";
-    Path fileLocation = Paths.get(directory).toAbsolutePath().normalize();
-    Path filePath = fileLocation.resolve("se").resolve(fileName).normalize();
-    Resource resource = new UrlResource(filePath.toUri());
-    String fileType = "image/png";
-
-    FileDownloadDto fileDownloadDto = FileDownloadDto.builder()
-        .originalName(originalFileName)
-        .resource(resource)
-        .fileType(fileType)
-        .build();
-    given(fileDownloadService.downloadFile(fileName)).willReturn(fileDownloadDto);
-
-    final ResultActions actions = mockMvc.perform(
-        get("/file-server/v1/" + notExistentFile)
-    );
-
-    // then
-//    actions.andExpect(status().isNotFound())
-//        .andExpect(content().string("{\"message\":\"파일이 존재하지 않습니다.\"}")).andDo(print());
-  }
-
-  @Test
-  void 존재하지_않는_URL() throws Exception {
-    String fileName = "teamlog.png";
+    fileDownloadService = new FileDownloadService(directory, fileRepositoryProtocol);
+    String notExistentSaveName = "pepe2.jpg";
+    String saveName = "pepe.jpg";
+    String service = "se";
+    String originalName = "페페.jpg";
+    setUp(saveName, service, originalName);
+    FileDownloadDto fileDownloadDto = null;
 
     try {
-      throw new MalformedURLException();
-    } catch (MalformedURLException e) {
-      // given
-      e.printStackTrace();
-      mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-          .addFilters(new CharacterEncodingFilter("UTF-8", true)).alwaysDo(print()).build();
-      given(fileDownloadService.downloadFile(fileName))
-          .willThrow(new NotFoundException(e.getMessage()));
-
       // when
-      final ResultActions actions = mockMvc.perform(
-          get("/file-server/v1/" + fileName)
-      );
-
+      fileDownloadDto = fileDownloadService.downloadFile(notExistentSaveName);
+    } catch (NotFoundException e) {
       // then
-//      actions.andExpect(status().isNotFound())
-//          .andExpect(content().string("{\"message\":" + e.getMessage() + "}"))
-//          .andDo(print());
+      assertThat(e.getMessage(), is("존재하지 않는 파일입니다."));
     }
+
+    assertThat(fileDownloadDto, is(nullValue()));
+  }
+
+  @Test
+  void 존재하지_않는_파일_경로() {
+    // given
+    String notExistentDirectory = "C:\\Users\\NotExistent";
+    fileDownloadService = new FileDownloadService(notExistentDirectory, fileRepositoryProtocol);
+    String saveName = "pepe2.png";
+    FileDownloadDto fileDownloadDto = null;
+
+    try {
+      // when
+      fileDownloadDto = fileDownloadService.downloadFile(saveName);
+    } catch (NotFoundException e) {
+      // then
+      assertThat(e.getMessage(), is("존재하지 않는 파일 경로입니다."));
+    }
+
+    assertThat(fileDownloadDto, is(nullValue()));
+  }
+
+  @Test
+  void 존재하지_않는_리소스() throws IOException {
+    // given
+    fileDownloadService = new FileDownloadService("", fileRepositoryProtocol);
+    String saveName = "pepe.jpg";
+    String service = "se";
+    String originalName = "페페.jpg";
+    setUp(saveName, service, originalName);
+    FileDownloadDto fileDownloadDto = null;
+
+    try {
+      // when
+      fileDownloadDto = fileDownloadService.downloadFile(saveName);
+    } catch (NotFoundException e) {
+      // then
+      assertThat(e.getMessage(), is("존재하지 않는 리소스입니다."));
+    }
+
+    assertThat(fileDownloadDto, is(nullValue()));
   }
 }

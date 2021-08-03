@@ -7,4 +7,6 @@ public interface FileRepositoryProtocol {
   File findBySaveName(String saveName);
 
   void delete(File file);
+
+  File save(File file);
 }
