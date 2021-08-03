@@ -3,7 +3,7 @@ package com.se.fileserver.v1.file.presentation.controller;
 import com.se.fileserver.v1.common.application.dto.request.PaginationRequest;
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.common.presentation.response.Response;
-import com.se.fileserver.v1.file.application.dto.FileCreateDto;
+import com.se.fileserver.v1.file.application.dto.FileUploadDto;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.application.dto.request.FileReadRequestDto;
 import com.se.fileserver.v1.file.application.service.FileDeleteService;
@@ -58,19 +58,19 @@ public class FileApiController {
     this.filePresenterFormatter = filePresenterFormatter;
   }
 
-  @ApiOperation("파일 업로드(단일_테스트용)")
+  @ApiOperation("파일 업로드 (단일 업로드만 가능_테스트용)")
   @PostMapping("/file")
   @ResponseStatus(value = HttpStatus.CREATED)
-  public Response<FileCreateDto> uploadFile(@RequestParam(value = "file") MultipartFile multipartFile, @RequestParam @NotNull String service) {
+  public Response<FileUploadDto> uploadFile(@RequestParam(value = "file") MultipartFile multipartFile, @RequestParam @NotNull String service) {
     File fileEntity = fileUploadService.uploadOne(multipartFile, service);
     return filePresenterFormatter.uploadFile(fileEntity);
   }
 
   /* (단일, 다중 가능) */
-  @ApiOperation("파일 업로드")
+  @ApiOperation("파일 업로드 (swagger에서는 테스트 불가능. PostMan등 사용 권장)")
   @PostMapping("/files")
   @ResponseStatus(value = HttpStatus.CREATED)
-  public List<Response<FileCreateDto>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> multipartFiles, @RequestParam @NotNull String service) {
+  public List<Response<FileUploadDto>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> multipartFiles, @RequestParam @NotNull String service) {
     List<File> fileEntityList = fileUploadService.upload(multipartFiles,service);
     return filePresenterFormatter.uploadFiles(fileEntityList);
   }

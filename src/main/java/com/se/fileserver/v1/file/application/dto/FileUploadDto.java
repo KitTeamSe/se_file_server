@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FileCreateDto {
+public class FileUploadDto {
 
   private String downloadUrl;
 
-  public FileCreateDto(String downloadUrl) {
+  public FileUploadDto(String downloadUrl) {
     this.downloadUrl = downloadUrl;
   }
 

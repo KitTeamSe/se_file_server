@@ -20,7 +20,7 @@ public class PaginationRequest<T> extends BaseRequest<T> {
   private int size;
   @ApiModelProperty(example = "ASC", notes = "정렬 방향")
   private Sort.Direction direction;
-  @ApiModelProperty(example = "id", notes = "정렬 기준")
+  @ApiModelProperty(example = "fileId", notes = "정렬 기준(정렬할 엔티티의 속성명)")
   private String orderBy;
 
   public PaginationRequest(T dto, int page, int size,
@@ -33,6 +33,6 @@ public class PaginationRequest<T> extends BaseRequest<T> {
   }
 
   public PageRequest of(){
-    return PageRequest.of(this.page, this.size, this.direction, this.orderBy);
+    return PageRequest.of(this.page-1, this.size, this.direction, this.orderBy);
   }
 }
