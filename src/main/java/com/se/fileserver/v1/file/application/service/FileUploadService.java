@@ -136,6 +136,8 @@ public class FileUploadService {
   /* Download 'uri' 생성 */
   private String createDownloadUri(String saveName) {
     return ServletUriComponentsBuilder.fromCurrentContextPath()
+        .path("/file-server/")
+        .path("/v1/")
         .path("/file/")
         .path(saveName)
         .toUriString();
