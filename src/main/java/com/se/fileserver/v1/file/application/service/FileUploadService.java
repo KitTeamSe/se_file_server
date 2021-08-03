@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.apache.commons.io.FilenameUtils;
+
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class FileUploadService {
   @Value("${se-file-server.upload-dir}")
   private Path fileLocation;
 
+  /* 단일, 다중 */
   @Transactional
   public List<File> upload(List<MultipartFile> multipartFiles, String service) {
 
@@ -43,8 +45,7 @@ public class FileUploadService {
       checkFileCondition(multipartFile);
     }
 
-    Path targetLocation = this.fileLocation;
-    targetLocation = ensureUploadDirectory(targetLocation, service);
+    Path targetLocation = getTargetLocation(service);
 
     List<File> fileEntityList = new ArrayList<>();
     for (MultipartFile multipartFile : multipartFiles) {
@@ -53,6 +54,23 @@ public class FileUploadService {
 
     fileRepository.saveAll(fileEntityList);
     return fileEntityList;
+  }
+
+  /* 단일 */
+  @Transactional
+  public File uploadOne(MultipartFile multipartFile, String service) {
+    checkFileCondition(multipartFile);
+    Path targetLocation = getTargetLocation(service);
+    File fileEntity = createFileEntity(multipartFile, targetLocation, service);
+    fileRepository.save(fileEntity);
+    return fileEntity;
+  }
+
+  /* 파일이 저장될 경로 */
+  private Path getTargetLocation(String service) {
+    Path targetLocation = this.fileLocation;
+    targetLocation = ensureUploadDirectory(targetLocation, service);
+    return targetLocation;
   }
 
   /* 파일 객체 생성 */

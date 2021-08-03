@@ -16,4 +16,5 @@ public interface FilePresenter {
   Response<Pageable> readFiles(Page<FileReadDto> filePage);
   ResponseEntity<Resource> downloadFile(FileDownloadDto fileDownloadDto);
   Response<String> deleteFile();
+  Response<FileCreateDto> uploadFile(File file);
 }

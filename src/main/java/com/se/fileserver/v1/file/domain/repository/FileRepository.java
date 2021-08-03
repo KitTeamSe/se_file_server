@@ -27,6 +27,8 @@ public class FileRepository implements FileRepositoryProtocol{
   public void delete(File file) {
     jpa.delete(file);
   }
+
+  @Override
   public List<File> saveAll(List<File> files) {
     return jpa.saveAll(files);
   }
@@ -39,6 +41,11 @@ public class FileRepository implements FileRepositoryProtocol{
   @Override
   public Page<File> findAllByService(Pageable pageable, String service) {
     return jpa.findAllByService(pageable, service);
+  }
+
+  @Override
+  public File save(File file) {
+    return jpa.save(file);
   }
 
 }

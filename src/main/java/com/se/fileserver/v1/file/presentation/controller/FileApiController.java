@@ -58,9 +58,17 @@ public class FileApiController {
     this.filePresenterFormatter = filePresenterFormatter;
   }
 
+  @ApiOperation("파일 업로드(단일_테스트용)")
+  @PostMapping("/file")
+  @ResponseStatus(value = HttpStatus.CREATED)
+  public Response<FileCreateDto> uploadFile(@RequestParam(value = "file") MultipartFile multipartFile, @RequestParam @NotNull String service) {
+    File fileEntity = fileUploadService.uploadOne(multipartFile, service);
+    return filePresenterFormatter.uploadFile(fileEntity);
+  }
+
   /* (단일, 다중 가능) */
   @ApiOperation("파일 업로드")
-  @PostMapping("/file")
+  @PostMapping("/files")
   @ResponseStatus(value = HttpStatus.CREATED)
   public List<Response<FileCreateDto>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> multipartFiles, @RequestParam @NotNull String service) {
     List<File> fileEntityList = fileUploadService.upload(multipartFiles,service);
@@ -69,7 +77,7 @@ public class FileApiController {
 
   /* 파일 목록 조회 */
   @ApiOperation("파일 목록 조회")
-  @PostMapping("/file/list")
+  @PostMapping("/file-list")
   @ResponseStatus(value = HttpStatus.OK)
   public Response<Pageable> readFiles(@RequestBody PaginationRequest<FileReadRequestDto> request) {
     PageImpl fileEntityList = fileReadService.readAll(request);

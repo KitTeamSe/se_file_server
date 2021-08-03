@@ -44,4 +44,10 @@ public class FilePresenterFormatter implements FilePresenter {
   public Response<String> deleteFile() {
     return new Response<>(HttpStatus.OK, "파일 삭제를 완료했습니다.");
   }
+
+  @Override
+  public Response<FileCreateDto> uploadFile(File file) {
+    return new Response<>(HttpStatus.CREATED, "파일(단일)을 성공적으로 업로드하였습니다.", new FileCreateDto(file.getDownloadUrl()));
+  }
+
 }
