@@ -6,6 +6,8 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.BDDMockito.given;
 
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
+import com.se.fileserver.v1.common.domain.exception.PreconditionFailedException;
+import com.se.fileserver.v1.common.domain.exception.SeException;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.application.service.FileDownloadService;
 import com.se.fileserver.v1.file.domain.model.File;
@@ -97,11 +99,12 @@ public class FileDownloadServiceTest {
     FileDownloadDto fileDownloadDto = fileDownloadService.downloadFile(saveName);
 
     // then
-    // assertThat(fileDownloadDto.getFileType(), is("application/haansofthwp"));
-    assertThat(fileDownloadDto.getOriginalName(),
-        is(new String("한글.hwp".getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1)));
-    assertThat(fileDownloadDto.getResource(),
-        is(resource));
+    throw new PreconditionFailedException(fileDownloadDto.getFileType());
+//    assertThat(fileDownloadDto.getFileType(), is("application/haansofthwp"));
+//    assertThat(fileDownloadDto.getOriginalName(),
+//        is(new String("한글.hwp".getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1)));
+//    assertThat(fileDownloadDto.getResource(),
+//        is(resource));
   }
 
   @Test
