@@ -61,6 +61,7 @@ public class FileApiController {
 
   @ApiOperation("파일 업로드 (단일 업로드만 가능_테스트용)")
   @PostMapping("/file")
+  @ApiImplicitParam(name = "service", defaultValue = "se")
   @ResponseStatus(value = HttpStatus.CREATED)
   public Response<FileUploadDto> uploadFile(@RequestParam(value = "file") MultipartFile multipartFile, @RequestParam @NotNull String service) {
     File fileEntity = fileUploadService.uploadOne(multipartFile, service);
@@ -88,7 +89,7 @@ public class FileApiController {
 
   /* 파일 다운로드 */
   @GetMapping("file/{saveName:.+}")
-  @ApiImplicitParam(name = "saveName", value = "저장된 파일 명")
+  @ApiImplicitParam(name = "saveName", value = "저장된 파일 명(.확장자 포함)")
   @ApiOperation(value = "파일 다운로드", notes = "파일 서버에 저장된 파일을 다운로드한다.")
   public ResponseEntity<Resource> downloadFile(@PathVariable String saveName) {
     // Load file as Resource
