@@ -30,7 +30,7 @@ import org.springframework.core.io.UrlResource;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class FileDownloadServiceTest {
 
-  private String directory = "/var/se-file-server";
+  private String directory = "C:\\Users\\Samsung\\Desktop\\SE 리뉴얼\\file";
 
   @Mock
   private FileRepositoryProtocol fileRepositoryProtocol;
