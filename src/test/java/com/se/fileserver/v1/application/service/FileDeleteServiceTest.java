@@ -24,7 +24,7 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class FileDeleteServiceTest {
 
-  private String directory = "file:////var/se-file-server";
+  private String directory = "/var/se-file-server";
 
   @Mock
   private FileRepositoryProtocol fileRepositoryProtocol;
@@ -46,11 +46,7 @@ public class FileDeleteServiceTest {
     FileInputStream inputStream = new FileInputStream(sourceLocation);
     Path fileLocation = Paths.get(this.directory).toAbsolutePath().normalize().resolve(service);
 
-    java.io.File folder = new java.io.File(fileLocation.toString());
-    if (!folder.exists()) {
-      folder.mkdir();
-    }
-
+    Files.createDirectories(fileLocation);
     Files.copy(inputStream, fileLocation.resolve(saveName), StandardCopyOption.REPLACE_EXISTING);
   }
 
@@ -90,7 +86,7 @@ public class FileDeleteServiceTest {
 
   @Test
   void 존재하지_않는_파일_경로() {
-    String notExistentDirectory = "C:\\Users\\NotExistent";
+    String notExistentDirectory = "C:/Users/NotExistent";
     fileDeleteService = new FileDeleteService(notExistentDirectory, fileRepositoryProtocol);
     String saveName = "file2.png";
     String service = "se";

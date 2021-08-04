@@ -30,7 +30,7 @@ import org.springframework.core.io.UrlResource;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class FileDownloadServiceTest {
 
-  private String directory = "file:////var/se-file-server";
+  private String directory = "/var/se-file-server";
 
   @Mock
   private FileRepositoryProtocol fileRepositoryProtocol;
@@ -52,11 +52,7 @@ public class FileDownloadServiceTest {
     FileInputStream inputStream = new FileInputStream(sourceLocation);
     Path fileLocation = Paths.get(this.directory).toAbsolutePath().normalize().resolve(service);
 
-    java.io.File folder = new java.io.File(fileLocation.toString());
-    if (!folder.exists()) {
-      folder.mkdir();
-    }
-
+    Files.createDirectories(fileLocation);
     Files.copy(inputStream, fileLocation.resolve(saveName), StandardCopyOption.REPLACE_EXISTING);
   }
 
@@ -133,7 +129,7 @@ public class FileDownloadServiceTest {
   @Test
   void 존재하지_않는_파일_경로() {
     // given
-    String notExistentDirectory = "C:\\Users\\NotExistent";
+    String notExistentDirectory = "C:/Users/NotExistent";
     fileDownloadService = new FileDownloadService(notExistentDirectory, fileRepositoryProtocol);
     String saveName = "pepe2.png";
     FileDownloadDto fileDownloadDto = null;
