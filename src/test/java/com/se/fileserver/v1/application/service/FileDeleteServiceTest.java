@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -24,14 +25,14 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class FileDeleteServiceTest {
 
-  private String directory = "C:\\Users\\Administrator\\Desktop\\attachment";
+  private String directory = "./test";
 
   @Mock
   private FileRepositoryProtocol fileRepositoryProtocol;
 
   private FileDeleteService fileDeleteService;
 
-  void setUp(String saveName, String service, String originalName) throws IOException {
+  private void setUp(String saveName, String service, String originalName) throws IOException {
     String sourceLocation =
         "src/test/java/com/se/fileserver/v1/application/service/file/" + originalName;
     String downloadUrl = "http://localhost:8070/file-server/v1/file/" + saveName;
@@ -50,6 +51,28 @@ public class FileDeleteServiceTest {
     Files.copy(inputStream, fileLocation.resolve(saveName), StandardCopyOption.REPLACE_EXISTING);
   }
 
+  private void close() {
+    java.io.File testDirectory = new java.io.File(directory);
+    java.io.File testService = Objects.requireNonNull(testDirectory.listFiles())[0];
+    java.io.File testFile = null;
+
+    if (Objects.requireNonNull(testService.listFiles()).length > 0) {
+      testFile = Objects.requireNonNull(testService.listFiles())[0];
+    }
+
+    if (testFile != null) {
+      testFile.delete();
+    }
+
+    if (testService.exists()) {
+      testService.delete();
+    }
+
+    if (testDirectory.exists()) {
+      testDirectory.delete();
+    }
+  }
+
   @Test
   void 파일_삭제_성공() throws IOException, InterruptedException {
     // given
@@ -62,6 +85,7 @@ public class FileDeleteServiceTest {
 
     // when
     fileDeleteService.deleteFile(service, saveName);
+    close();
   }
 
   @Test
@@ -81,6 +105,7 @@ public class FileDeleteServiceTest {
     } catch (NotFoundException e) {
       // then
       assertThat(e.getMessage(), is("존재하지 않는 파일입니다."));
+      close();
     }
   }
 
