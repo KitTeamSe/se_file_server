@@ -30,7 +30,7 @@ import org.springframework.core.io.UrlResource;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class FileDownloadServiceTest {
 
-  private String directory = "file:////var/se-file-server";
+  private String directory = "/var/se-file-server";
 
   @Mock
   private FileRepositoryProtocol fileRepositoryProtocol;
@@ -39,7 +39,7 @@ public class FileDownloadServiceTest {
 
   void setUp(String saveName, String service, String originalName) throws IOException {
     String sourceLocation =
-        "src\\test\\java\\com\\se\\fileserver\\v1\\application\\service\\file\\" + originalName;
+        "src/test/java/com/se/fileserver/v1/application/service/file/" + originalName;
     String downloadUrl = "http://localhost:8070/file-server/v1/file/" + saveName;
     String fileType = Files
         .probeContentType(Paths.get(sourceLocation).toAbsolutePath().normalize());
