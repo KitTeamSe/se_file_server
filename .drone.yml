@@ -14,7 +14,7 @@ steps:
         memory: 2048MiB
     commands:
       - chmod +x gradlew
-      - ./gradlew build test
+      - ./gradlew build test -i
     depends_on:
       - mysql-db
 
