@@ -30,6 +30,10 @@ public class FileRepository implements FileRepositoryProtocol{
   }
 
   @Override
+  public File save(File file) {
+    return jpa.save(file);
+  }
+
   public List<File> saveAll(List<File> files) {
     return jpa.saveAll(files);
   }
@@ -43,10 +47,4 @@ public class FileRepository implements FileRepositoryProtocol{
   public Page<File> findAllByService(Pageable pageable, String service) {
     return jpa.findAllByService(pageable, service);
   }
-
-  @Override
-  public File save(File file) {
-    return jpa.save(file);
-  }
-
 }
