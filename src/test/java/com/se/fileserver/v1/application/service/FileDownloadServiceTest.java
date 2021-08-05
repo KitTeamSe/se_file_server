@@ -17,17 +17,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
+@Slf4j
 public class FileDownloadServiceTest {
 
   private String directory = "C:\\Users\\Samsung\\Desktop\\SE 리뉴얼\\file";
@@ -36,6 +40,8 @@ public class FileDownloadServiceTest {
   private FileRepositoryProtocol fileRepositoryProtocol;
 
   private FileDownloadService fileDownloadService;
+
+  Logger logger = LoggerFactory.getLogger(FileDownloadServiceTest.class);
 
   void setUp(String saveName, String service, String originalName) throws IOException {
     String sourceLocation =
@@ -97,7 +103,8 @@ public class FileDownloadServiceTest {
     FileDownloadDto fileDownloadDto = fileDownloadService.downloadFile(saveName);
 
     // then
-    System.out.println("fileDownloadDto.getFileType() = " + fileDownloadDto.getFileType());
+    // System.out.println("fileDownloadDto.getFileType() = " + fileDownloadDto.getFileType());
+    logger.info("fileDownloadDto.getFileType() = " + fileDownloadDto.getFileType());
     assertThat(fileDownloadDto.getFileType(), is("application/haansofthwp"));
     assertThat(fileDownloadDto.getOriginalName(),
         is(new String("한글.hwp".getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1)));
