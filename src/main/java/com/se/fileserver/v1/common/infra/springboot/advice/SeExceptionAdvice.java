@@ -28,7 +28,7 @@ public class SeExceptionAdvice {
 
   // When precondition failed
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<ExceptionResponse> handleConstraintViolationException(final Exception e) {
+  public ResponseEntity<ExceptionResponse> handleConstraintViolationException(final ConstraintViolationException e) {
     this.countExceptionAndLog(e);
     return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.PRECONDITION_FAILED);
   }
