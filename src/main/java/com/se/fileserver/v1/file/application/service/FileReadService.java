@@ -28,7 +28,7 @@ public class FileReadService {
 
     Page<File> filePage;
 
-    if (!fileRepository.findFirstByService(request.getDto().getService()).isPresent())
+    if (request.getDto().getService() != null && !fileRepository.findFirstByService(request.getDto().getService()).isPresent())
       throw new NotFoundException("해당 서비스명과 일치하는 파일이 존재하지 않습니다.");
 
     if (request.getDto().getService() == null) {
