@@ -3,6 +3,8 @@ package com.se.fileserver.v1.common.infra.springboot.advice;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.se.fileserver.v1.common.domain.exception.SeException;
+import com.se.fileserver.v1.common.infra.logging.SeLogger;
+import com.se.fileserver.v1.common.infra.logging.standard.SeStandardLogger;
 import com.se.fileserver.v1.common.presentation.response.ExceptionResponse;
 import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class SeExceptionAdvice {
+
+  private final SeLogger logger;
+
+  public SeExceptionAdvice() {
+    this.logger = new SeStandardLogger();
+  }
 
   @ExceptionHandler(SeException.class)
   public ResponseEntity<ExceptionResponse> handleSeException(final SeException e) {
@@ -69,9 +77,7 @@ public class SeExceptionAdvice {
   }
 
   private void countExceptionAndLog(final Exception e) {
-    // TODO: Stack trace 등의 정보는 로그 스택에 저장
-    e.printStackTrace();
-//    log.error("{}: {}", e.getClass().getSimpleName(), e.getLocalizedMessage());
-//    log.debug("{}: {}", e.getClass().getCanonicalName(), e.getMessage(), e);
+    logger.error(e.getClass().getSimpleName(), e.getMessage());
+    logger.debug(e.getClass().getSimpleName(), e.getMessage(), e);
   }
 }
