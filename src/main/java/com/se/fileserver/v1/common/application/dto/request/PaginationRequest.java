@@ -12,8 +12,8 @@ import org.springframework.data.domain.Sort.Direction;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class PaginationRequest<T> extends BaseRequest<T> {
-  @ApiModelProperty(example = "1", notes = "페이지, 1 이상만 가능")
-  @Min(value = 1)
+  @ApiModelProperty(example = "0", notes = "페이지, 0이상부터 가능")
+  @Min(value = 0)
   private int page;
   @ApiModelProperty(example = "50", notes = "페이지의 사이즈, 10 이상 50 이하만 가능")
   @Min(value = 10)
@@ -33,6 +33,6 @@ public class PaginationRequest<T> extends BaseRequest<T> {
   }
 
   public PageRequest of(){
-    return PageRequest.of(this.page-1, this.size, this.direction, this.orderBy);
+    return PageRequest.of(this.page, this.size, this.direction, this.orderBy);
   }
 }
