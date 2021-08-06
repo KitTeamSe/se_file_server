@@ -30,6 +30,12 @@ public class ExceptionResponse {
     return new ExceptionResponse(e);
   }
 
+  public static ExceptionResponse of(Exception e, String message) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(e);
+    exceptionResponse.message = message;
+    return exceptionResponse;
+  }
+
   private List<FieldError> initErrors(List<FieldError> errors) {
     return (errors == null) ? new ArrayList<>() : errors;
   }
