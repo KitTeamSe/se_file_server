@@ -1,15 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration scan="true" scanPeriod="60 seconds">
 
   <!--로그 파일 저장 위치-->
   <property name="LOGS_PATH" value="./logs"/>
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+  <!--출력 정보 설정-->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <layout class="ch.qos.logback.classic.PatternLayout">
       <Pattern>%d{HH:mm} %-5level %logger{36} - %msg%n</Pattern>
     </layout>
   </appender>
-  <appender name="DAILY_ROLLING_FILE_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>${LOGS_PATH}/logback.log</file>
     <encoder>
       <charset>UTF-8</charset>
@@ -26,10 +27,21 @@
     </rollingPolicy>
   </appender>
 
-  <logger name="com.se.fileserver" level="INFO">
-    <appender-ref ref="DAILY_ROLLING_FILE_APPENDER" />
-  </logger>
-  <root level="INFO">
-    <appender-ref ref="STDOUT" />
-  </root>
+  <!--출력 프로필 설정-->
+  <!--로컬 환경인 경우, 콘솔에만 출력-->
+  <springProfile name="local">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+  </springProfile>
+
+  <!--배포 환경인 경우, 콘솔 + 파일 출력 -->
+  <springProfile name="prod">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+      <appender-ref ref="FILE" />
+    </root>
+  </springProfile>
+
+
 </configuration>
