@@ -60,10 +60,9 @@ public class FileUploadServiceTest {
     File mockFile = mock(File.class);
     MockMultipartFile mockMultipartFile = createMockMultipartFile("fileName", 1L);
     String service = "service";
-    String saveName = anyString();
 
     when(fileRepository.save(mockFile)).thenReturn(mockFile);
-    when(fileRepository.findBySaveName(saveName)).thenReturn(Optional.ofNullable(null));
+    when(fileRepository.findBySaveName(anyString())).thenReturn(Optional.ofNullable(null));
 
     //when
     //then
@@ -85,10 +84,9 @@ public class FileUploadServiceTest {
     mockMultipartFileList.add(mockMultipartFile2);
 
     String service = "service";
-    String saveName = anyString();
 
     when(fileRepository.saveAll(mockFileList)).thenReturn(mockFileList);
-    when(fileRepository.findBySaveName(saveName)).thenReturn(Optional.ofNullable(null));
+    when(fileRepository.findBySaveName(anyString())).thenReturn(Optional.ofNullable(null));
 
     //when
     //then
