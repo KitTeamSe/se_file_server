@@ -69,7 +69,6 @@ public class FileUploadServiceTest {
     //then
     assertDoesNotThrow(() -> fileUploadService.uploadOne(mockMultipartFile, service));
 
-    Thread.sleep(4000);
     closeIOFileResource(TEST_DIR);
   }
 
@@ -95,7 +94,6 @@ public class FileUploadServiceTest {
     //then
     assertDoesNotThrow(() -> fileUploadService.upload(mockMultipartFileList, service));
 
-    Thread.sleep(4000);
     closeIOFileResource(TEST_DIR);
   }
 
