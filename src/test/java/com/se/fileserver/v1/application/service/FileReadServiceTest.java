@@ -41,8 +41,7 @@ public class FileReadServiceTest {
   @Test
   public void 서비스값_없음_성공() throws Exception{
     //given
-    PaginationRequest<FileReadRequestDto> request = new PaginationRequest(
-        new FileReadRequestDto(null),0,10,Direction.ASC, "createdAt");
+    PaginationRequest<FileReadRequestDto> request = new PaginationRequest(new FileReadRequestDto(null),0,10,Direction.ASC, "createdAt");
     Page<File> filePage = new PageImpl(Collections.emptyList(), request.of(), 0L);
     when(fileRepository.findAll(request.of())).thenReturn(filePage);
     //when
@@ -53,8 +52,7 @@ public class FileReadServiceTest {
   @Test
   public void 서비스값_존재_성공() throws Exception{
     //given
-    PaginationRequest<FileReadRequestDto> request = new PaginationRequest(
-        new FileReadRequestDto("se"),0,10,Direction.ASC, "createdAt");
+    PaginationRequest<FileReadRequestDto> request = new PaginationRequest(new FileReadRequestDto("se"),0,10,Direction.ASC, "createdAt");
     Page<File> filePage = new PageImpl(Collections.emptyList(), request.of(), 0L);
 
     File file = mock(File.class);
@@ -64,7 +62,6 @@ public class FileReadServiceTest {
     //then
     assertDoesNotThrow(() -> fileReadService.readAll(request));
   }
-
   @Test
   public void 서비스값_존재하지않음_실패() throws Exception{
     //given

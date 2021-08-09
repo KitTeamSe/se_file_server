@@ -12,7 +12,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,8 +32,14 @@ public class FileUploadService {
 
   @Value("${se-file-server.max-file-size}")
   private Long maxFileSize;
+  public void setMaxSize(Long size) {
+    maxFileSize = size;
+  }
   @Value("${se-file-server.upload-dir}")
   private Path fileLocation;
+  public void setUploadDir(Path location) {
+    fileLocation = location;
+  }
 
   /* 단일, 다중 */
   @Transactional
@@ -103,33 +108,33 @@ public class FileUploadService {
 
   /* 유효성 검증 : 파일명, 파일 크기 */
   private void checkFileCondition(MultipartFile multipartFile) {
-      String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+    if (multipartFile == null) {
+      throw new InvalidFileException("파일을 가져오지 못하였습니다.");
+    }
 
-      if (multipartFile == null) {
-        throw new InvalidFileException("파일을 가져오지 못하였습니다.");
-      }
+    String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 
-      if (fileName.contains("..")) {
-        throw new InvalidFileException("파일명에 [..]가 존재합니다 : " + fileName);
-      }
+    if (fileName.contains("..")) {
+      throw new InvalidFileException("파일명에 [..]가 존재합니다 : " + fileName);
+    }
 
-      if (multipartFile.getSize() <= 0) {
-        throw new InvalidFileException("파일 크기가 0보다 작습니다 : " + fileName);
-      }
+    if (multipartFile.getSize() <= 0) {
+      throw new InvalidFileException("파일 크기가 0보다 작습니다 : " + fileName);
+    }
 
-      if (multipartFile.getSize() >= maxFileSize) {
-        throw new AttachmentTooLargeException("파일 크기가 " + maxFileSize + "를 초과합니다 : " + fileName);
-      }
+    if (multipartFile.getSize() >= maxFileSize) {
+      throw new AttachmentTooLargeException("파일 크기가 " + maxFileSize + "를 초과합니다 : " + fileName);
+    }
   }
 
   /* 서버에 저장될 파일명 검증 */
-  /* -- Storage : 파일서버의 저장공간 */
-  private boolean isSameSaveNameExistsInStorage(Path targetLocation) {
-    return Files.exists(targetLocation);
-  }
   /* -- Repository : DataBase */
   private boolean isSameSaveNameExistsInRepository(String saveName) {
     return fileRepository.findBySaveName(saveName).isPresent();
+  }
+  /* -- Storage : 파일서버의 저장공간 */
+  private boolean isSameSaveNameExistsInStorage(Path targetLocation) {
+    return Files.exists(targetLocation);
   }
 
   /* Download 'uri' 생성 */
