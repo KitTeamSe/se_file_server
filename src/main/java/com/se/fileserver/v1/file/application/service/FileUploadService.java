@@ -32,14 +32,9 @@ public class FileUploadService {
 
   @Value("${se-file-server.max-file-size}")
   private Long maxFileSize;
-  public void setMaxSize(Long size) {
-    maxFileSize = size;
-  }
+
   @Value("${se-file-server.upload-dir}")
   private Path fileLocation;
-  public void setUploadDir(Path location) {
-    fileLocation = location;
-  }
 
   /* 단일, 다중 */
   @Transactional
