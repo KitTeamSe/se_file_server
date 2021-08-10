@@ -29,7 +29,7 @@ public class AccountSignInService {
   @Transactional
   public String signIn(AccountSignInDto accountSignInDto, String ip){
     Account account = accountRepository.findByIdString(accountSignInDto.getId()).orElseThrow(() -> new BadRequestException("Account not found."));
-    if(isMatch(account, accountSignInDto.getPassword())){
+    if(!isMatch(account, accountSignInDto.getPassword())){
       throw new BadRequestException("The password is incorrect.");
     }
     return jwtTokenResolver.createToken(String.valueOf(account.getIdString()));
