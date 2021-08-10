@@ -34,7 +34,7 @@ public class FileUploadService {
   private Long maxFileSize;
 
   @Value("${se-file-server.upload-dir}")
-  private Path fileLocation;
+  private Path uploadDir;
 
   /* 단일, 다중 */
   @Transactional
@@ -67,7 +67,7 @@ public class FileUploadService {
 
   /* 파일이 저장될 경로 */
   private Path getTargetLocation(String service) {
-    Path targetLocation = this.fileLocation;
+    Path targetLocation = this.uploadDir;
     targetLocation = ensureUploadDirectory(targetLocation, service);
     return targetLocation;
   }

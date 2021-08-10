@@ -57,7 +57,7 @@ public class FileUploadServiceTest {
   @Test
   public void 단일_파일_업로드_성공() throws Exception{
     //given
-    ReflectionTestUtils.setField(fileUploadService,"fileLocation",Paths.get(TEST_DIR));
+    ReflectionTestUtils.setField(fileUploadService,"uploadDir",Paths.get(TEST_DIR));
 
     File mockFile = mock(File.class);
     MockMultipartFile mockMultipartFile = createMockMultipartFile("fileName", 1L);
@@ -76,7 +76,7 @@ public class FileUploadServiceTest {
   @Test
   public void 다중_파일_업로드_성공() throws Exception{
     //given
-    ReflectionTestUtils.setField(fileUploadService,"fileLocation",Paths.get(TEST_DIR));
+    ReflectionTestUtils.setField(fileUploadService,"uploadDir",Paths.get(TEST_DIR));
 
     List<File> mockFileList = mock(List.class);
     List<MultipartFile> mockMultipartFileList = new ArrayList<>();
@@ -102,7 +102,7 @@ public class FileUploadServiceTest {
     // given
     MockMultipartFile mockMultipartFile = null;
 
-    ReflectionTestUtils.setField(fileUploadService,"fileLocation",Paths.get(TEST_DIR));
+    ReflectionTestUtils.setField(fileUploadService,"uploadDir",Paths.get(TEST_DIR));
     String service = "service";
 
     // when
@@ -117,7 +117,7 @@ public class FileUploadServiceTest {
     //given
     String invalidFileName = "..";
 
-    ReflectionTestUtils.setField(fileUploadService,"fileLocation",Paths.get(TEST_DIR));
+    ReflectionTestUtils.setField(fileUploadService,"uploadDir",Paths.get(TEST_DIR));
     MockMultipartFile mockMultipartFile = createMockMultipartFile(invalidFileName,1L);
     String service = "service";
 
@@ -133,7 +133,7 @@ public class FileUploadServiceTest {
     //given
     Long invalidFileSize = 0L;
 
-    ReflectionTestUtils.setField(fileUploadService,"fileLocation",Paths.get(TEST_DIR));
+    ReflectionTestUtils.setField(fileUploadService,"uploadDir",Paths.get(TEST_DIR));
     MockMultipartFile mockMultipartFile = createMockMultipartFile("fileName",invalidFileSize);
     String service = "service";
 
@@ -148,7 +148,7 @@ public class FileUploadServiceTest {
   public void 파일_최대크기_초과_실패() throws Exception{
     Long invalidFileSize = 101L;
     Long maxFileSize = 100L;
-    ReflectionTestUtils.setField(fileUploadService,"fileLocation",Paths.get(TEST_DIR));
+    ReflectionTestUtils.setField(fileUploadService,"uploadDir",Paths.get(TEST_DIR));
     ReflectionTestUtils.setField(fileUploadService, "maxFileSize", maxFileSize);
     MockMultipartFile mockMultipartFile = createMockMultipartFile("fileName",invalidFileSize);
     String service = "service";
