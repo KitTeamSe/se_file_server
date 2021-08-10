@@ -47,4 +47,10 @@ public class FileRepository implements FileRepositoryProtocol{
   public Page<File> findAllByService(Pageable pageable, String service) {
     return jpa.findAllByService(pageable, service);
   }
+
+  @Override
+  public Optional<File> findFirstByService(String service) {
+    return jpa.findFirstByService(service);
+  }
+
 }

@@ -1,6 +1,7 @@
 package com.se.fileserver.v1.file.application.service;
 
 import com.se.fileserver.v1.common.domain.exception.AttachmentTooLargeException;
+import com.se.fileserver.v1.file.application.dto.FileUploadDto;
 import com.se.fileserver.v1.file.application.service.exception.FileStoreException;
 import com.se.fileserver.v1.file.application.service.exception.InvalidFileException;
 import com.se.fileserver.v1.file.domain.model.File;
@@ -12,6 +13,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,12 +35,13 @@ public class FileUploadService {
 
   @Value("${se-file-server.max-file-size}")
   private Long maxFileSize;
+
   @Value("${se-file-server.upload-dir}")
-  private Path fileLocation;
+  private Path uploadDir;
 
   /* 단일, 다중 */
   @Transactional
-  public List<File> upload(List<MultipartFile> multipartFiles, String service) {
+  public List<FileUploadDto> upload(List<MultipartFile> multipartFiles, String service) {
 
     for (MultipartFile multipartFile : multipartFiles) {
       checkFileCondition(multipartFile);
@@ -51,22 +55,26 @@ public class FileUploadService {
     }
 
     fileRepository.saveAll(fileEntityList);
-    return fileEntityList;
+
+    return fileEntityList.stream()
+        .map(fileEntlty -> FileUploadDto.of(fileEntlty))
+        .collect(Collectors.toList());
   }
 
   /* 단일 */
   @Transactional
-  public File uploadOne(MultipartFile multipartFile, String service) {
+  public FileUploadDto uploadOne(MultipartFile multipartFile, String service) {
     checkFileCondition(multipartFile);
     Path targetLocation = getTargetLocation(service);
     File fileEntity = createFileEntity(multipartFile, targetLocation, service);
     fileRepository.save(fileEntity);
-    return fileEntity;
+
+    return FileUploadDto.of(fileEntity);
   }
 
   /* 파일이 저장될 경로 */
   private Path getTargetLocation(String service) {
-    Path targetLocation = this.fileLocation;
+    Path targetLocation = this.uploadDir;
     targetLocation = ensureUploadDirectory(targetLocation, service);
     return targetLocation;
   }
@@ -102,33 +110,33 @@ public class FileUploadService {
 
   /* 유효성 검증 : 파일명, 파일 크기 */
   private void checkFileCondition(MultipartFile multipartFile) {
-      String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+    if (multipartFile == null) {
+      throw new InvalidFileException("파일을 가져오지 못하였습니다.");
+    }
 
-      if (multipartFile == null) {
-        throw new InvalidFileException("파일을 가져오지 못하였습니다.");
-      }
+    String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 
-      if (fileName.contains("..")) {
-        throw new InvalidFileException("파일명에 [..]가 존재합니다 : " + fileName);
-      }
+    if (fileName.contains("..")) {
+      throw new InvalidFileException("파일명에 [..]가 존재합니다 : " + fileName);
+    }
 
-      if (multipartFile.getSize() <= 0) {
-        throw new InvalidFileException("파일 크기가 0보다 작습니다 : " + fileName);
-      }
+    if (multipartFile.getSize() <= 0) {
+      throw new InvalidFileException("파일 크기가 0보다 작습니다 : " + fileName);
+    }
 
-      if (multipartFile.getSize() >= maxFileSize) {
-        throw new AttachmentTooLargeException("파일 크기가 " + maxFileSize + "를 초과합니다 : " + fileName);
-      }
+    if (multipartFile.getSize() >= maxFileSize) {
+      throw new AttachmentTooLargeException("파일 크기가 " + maxFileSize + "를 초과합니다 : " + fileName);
+    }
   }
 
   /* 서버에 저장될 파일명 검증 */
-  /* -- Storage : 파일서버의 저장공간 */
-  private boolean isSameSaveNameExistsInStorage(Path targetLocation) {
-    return Files.exists(targetLocation);
-  }
   /* -- Repository : DataBase */
   private boolean isSameSaveNameExistsInRepository(String saveName) {
     return fileRepository.findBySaveName(saveName).isPresent();
+  }
+  /* -- Storage : 파일서버의 저장공간 */
+  private boolean isSameSaveNameExistsInStorage(Path targetLocation) {
+    return Files.exists(targetLocation);
   }
 
   /* Download 'uri' 생성 */

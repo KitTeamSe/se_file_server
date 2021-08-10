@@ -7,6 +7,7 @@ import com.se.fileserver.v1.file.application.dto.FileUploadDto;
 import com.se.fileserver.v1.file.domain.model.File;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.fileupload.FileUpload;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +21,9 @@ import org.springframework.stereotype.Component;
 public class FilePresenterFormatter implements FilePresenter {
 
   @Override
-  public List<Response<FileUploadDto>> uploadFiles(List<File> files) {
-    return files.stream()
-        .map(file -> new Response<>(HttpStatus.CREATED, "파일을 성공적으로 업로드하였습니다.", new FileUploadDto(file.getDownloadUrl())))
+  public List<Response<FileUploadDto>> uploadFiles(List<FileUploadDto> fileUploadDtoList) {
+    return fileUploadDtoList.stream()
+        .map(fileUploadDto -> new Response<>(HttpStatus.CREATED, "파일을 성공적으로 업로드하였습니다.", fileUploadDto))
         .collect(Collectors.toList());
   }
 
@@ -46,8 +47,8 @@ public class FilePresenterFormatter implements FilePresenter {
   }
 
   @Override
-  public Response<FileUploadDto> uploadFile(File file) {
-    return new Response<>(HttpStatus.CREATED, "파일(단일)을 성공적으로 업로드하였습니다.", new FileUploadDto(file.getDownloadUrl()));
+  public Response<FileUploadDto> uploadFile(FileUploadDto fileUploadDto) {
+    return new Response<>(HttpStatus.CREATED, "파일(단일)을 성공적으로 업로드하였습니다.", fileUploadDto);
   }
 
 }

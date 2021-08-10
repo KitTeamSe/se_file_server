@@ -12,4 +12,5 @@ public interface FileJpaRepository extends JpaRepository<File,Long> {
   void delete(File file);
   Page<File> findAll(Pageable pageable);
   Page<File> findAllByService(Pageable pageable, String service);
+  Optional<File> findFirstByService(String service);
 }
