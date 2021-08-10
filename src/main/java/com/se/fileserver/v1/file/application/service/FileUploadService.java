@@ -1,6 +1,7 @@
 package com.se.fileserver.v1.file.application.service;
 
 import com.se.fileserver.v1.common.domain.exception.AttachmentTooLargeException;
+import com.se.fileserver.v1.file.application.dto.FileUploadDto;
 import com.se.fileserver.v1.file.application.service.exception.FileStoreException;
 import com.se.fileserver.v1.file.application.service.exception.InvalidFileException;
 import com.se.fileserver.v1.file.domain.model.File;
@@ -12,6 +13,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,7 +41,7 @@ public class FileUploadService {
 
   /* 단일, 다중 */
   @Transactional
-  public List<File> upload(List<MultipartFile> multipartFiles, String service) {
+  public List<FileUploadDto> upload(List<MultipartFile> multipartFiles, String service) {
 
     for (MultipartFile multipartFile : multipartFiles) {
       checkFileCondition(multipartFile);
@@ -52,17 +55,21 @@ public class FileUploadService {
     }
 
     fileRepository.saveAll(fileEntityList);
-    return fileEntityList;
+
+    return fileEntityList.stream()
+        .map(fileEntlty -> FileUploadDto.of(fileEntlty))
+        .collect(Collectors.toList());
   }
 
   /* 단일 */
   @Transactional
-  public File uploadOne(MultipartFile multipartFile, String service) {
+  public FileUploadDto uploadOne(MultipartFile multipartFile, String service) {
     checkFileCondition(multipartFile);
     Path targetLocation = getTargetLocation(service);
     File fileEntity = createFileEntity(multipartFile, targetLocation, service);
     fileRepository.save(fileEntity);
-    return fileEntity;
+
+    return FileUploadDto.of(fileEntity);
   }
 
   /* 파일이 저장될 경로 */

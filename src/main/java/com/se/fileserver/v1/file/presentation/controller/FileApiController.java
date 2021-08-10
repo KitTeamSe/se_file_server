@@ -64,7 +64,7 @@ public class FileApiController {
   @ApiImplicitParam(name = "service", defaultValue = "se")
   @ResponseStatus(value = HttpStatus.CREATED)
   public Response<FileUploadDto> uploadFile(@RequestParam(value = "file") MultipartFile multipartFile, @RequestParam @NotNull String service) {
-    File fileEntity = fileUploadService.uploadOne(multipartFile, service);
+    FileUploadDto fileEntity = fileUploadService.uploadOne(multipartFile, service);
     return filePresenterFormatter.uploadFile(fileEntity);
   }
 
@@ -73,7 +73,7 @@ public class FileApiController {
   @PostMapping("/files")
   @ResponseStatus(value = HttpStatus.CREATED)
   public List<Response<FileUploadDto>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> multipartFiles, @RequestParam @NotNull String service) {
-    List<File> fileEntityList = fileUploadService.upload(multipartFiles,service);
+    List<FileUploadDto> fileEntityList = fileUploadService.upload(multipartFiles,service);
     return filePresenterFormatter.uploadFiles(fileEntityList);
   }
 
