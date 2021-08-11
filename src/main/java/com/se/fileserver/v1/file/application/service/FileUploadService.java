@@ -138,7 +138,7 @@ public class FileUploadService {
     return Files.exists(targetLocation);
   }
 
-  /* Download 'uri' 생성 */
+  /* DownloadUrl 생성 */
   private String createDownloadUrl(String saveName) {
     return ServletUriComponentsBuilder.fromCurrentContextPath()
         .path("/file-server/")
