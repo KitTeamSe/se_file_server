@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 public interface FilePresenter {
-  List<Response<FileUploadDto>> uploadFiles(List<FileUploadDto> files);
+  Response<List<FileUploadDto>> uploadFiles(List<FileUploadDto> files);
   Response<Pageable> readFiles(Page<FileReadDto> filePage);
   ResponseEntity<Resource> downloadFile(FileDownloadDto fileDownloadDto);
   Response<String> deleteFile();
