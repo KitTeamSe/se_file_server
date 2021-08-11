@@ -3,14 +3,13 @@ package com.se.fileserver.v1.file.presentation.controller;
 import com.se.fileserver.v1.common.application.dto.request.PaginationRequest;
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.common.presentation.response.Response;
-import com.se.fileserver.v1.file.application.dto.FileUploadDto;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
+import com.se.fileserver.v1.file.application.dto.FileUploadDto;
 import com.se.fileserver.v1.file.application.dto.request.FileReadRequestDto;
 import com.se.fileserver.v1.file.application.service.FileDeleteService;
 import com.se.fileserver.v1.file.application.service.FileDownloadService;
 import com.se.fileserver.v1.file.application.service.FileReadService;
 import com.se.fileserver.v1.file.application.service.FileUploadService;
-import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.presentation.presenter.FilePresenterFormatter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -72,7 +71,7 @@ public class FileApiController {
   @ApiOperation("파일 업로드 (swagger에서는 테스트 불가능. PostMan등 사용 권장)")
   @PostMapping("/files")
   @ResponseStatus(value = HttpStatus.CREATED)
-  public List<Response<FileUploadDto>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> multipartFiles, @RequestParam @NotNull String service) {
+  public Response<List<FileUploadDto>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> multipartFiles, @RequestParam @NotNull String service) {
     List<FileUploadDto> fileEntityList = fileUploadService.upload(multipartFiles,service);
     return filePresenterFormatter.uploadFiles(fileEntityList);
   }

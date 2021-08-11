@@ -21,10 +21,8 @@ import org.springframework.stereotype.Component;
 public class FilePresenterFormatter implements FilePresenter {
 
   @Override
-  public List<Response<FileUploadDto>> uploadFiles(List<FileUploadDto> fileUploadDtoList) {
-    return fileUploadDtoList.stream()
-        .map(fileUploadDto -> new Response<>(HttpStatus.CREATED, "파일을 성공적으로 업로드하였습니다.", fileUploadDto))
-        .collect(Collectors.toList());
+  public Response<List<FileUploadDto>> uploadFiles(List<FileUploadDto> fileUploadDtoList) {
+    return new Response<>(HttpStatus.CREATED, "파일을 성공적으로 업로드하였습니다.", fileUploadDtoList);
   }
 
   @Override

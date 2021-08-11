@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -91,10 +90,10 @@ public class FileUploadService {
       saveName = createSaveName(getExtension(multipartFile));
     } while (isSameSaveNameExistsInRepository(saveName) || isSameSaveNameExistsInStorage(storedLocation.resolve(saveName)));
 
-    String downloadUri = createDownloadUri(saveName);
+    String downloadUrl = createDownloadUrl(saveName);
 
     File newFile = new File(
-        downloadUri,
+        downloadUrl,
         service,
         fileType,
         originalName,
@@ -139,8 +138,8 @@ public class FileUploadService {
     return Files.exists(targetLocation);
   }
 
-  /* Download 'uri' 생성 */
-  private String createDownloadUri(String saveName) {
+  /* DownloadUrl 생성 */
+  private String createDownloadUrl(String saveName) {
     return ServletUriComponentsBuilder.fromCurrentContextPath()
         .path("/file-server/")
         .path("/v1/")
