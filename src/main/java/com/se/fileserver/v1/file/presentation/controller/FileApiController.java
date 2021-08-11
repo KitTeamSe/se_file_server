@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -61,7 +62,7 @@ public class FileApiController {
   @PostMapping("/file")
   @ApiImplicitParam(name = "service", defaultValue = "se")
   @ResponseStatus(value = HttpStatus.CREATED)
-  public Response<FileUploadDto> uploadFile(@RequestParam(value = "file") MultipartFile multipartFile, @RequestParam String service) {
+  public Response<FileUploadDto> uploadFile(@RequestParam(value = "file") MultipartFile multipartFile, @RequestParam @NotNull String service) {
     FileUploadDto fileEntity = fileUploadService.uploadOne(multipartFile, service);
     return filePresenterFormatter.uploadFile(fileEntity);
   }
@@ -70,7 +71,7 @@ public class FileApiController {
   @ApiOperation("파일 업로드 (swagger에서는 테스트 불가능. PostMan등 사용 권장)")
   @PostMapping("/files")
   @ResponseStatus(value = HttpStatus.CREATED)
-  public Response<List<FileUploadDto>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> multipartFiles, @RequestParam String service) {
+  public Response<List<FileUploadDto>> uploadFiles(@RequestParam(value = "files") List<MultipartFile> multipartFiles, @RequestParam @NotNull String service) {
     List<FileUploadDto> fileEntityList = fileUploadService.upload(multipartFiles,service);
     return filePresenterFormatter.uploadFiles(fileEntityList);
   }
