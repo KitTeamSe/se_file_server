@@ -56,7 +56,7 @@ public class FileUploadService {
     fileRepository.saveAll(fileEntityList);
 
     return fileEntityList.stream()
-        .map(fileEntlty -> FileUploadDto.of(fileEntlty))
+        .map(fileEntity -> FileUploadDto.of(fileEntity))
         .collect(Collectors.toList());
   }
 

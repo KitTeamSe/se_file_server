@@ -10,13 +10,15 @@ import lombok.NoArgsConstructor;
 public class FileUploadDto {
 
   private String downloadUrl;
+  private String originalName;
 
-  public FileUploadDto(String downloadUrl) {
+  public FileUploadDto(String downloadUrl, String originalName) {
     this.downloadUrl = downloadUrl;
+    this.originalName = originalName;
   }
 
   public static FileUploadDto of(File file) {
-    return new FileUploadDto(file.getDownloadUrl());
+    return new FileUploadDto(file.getDownloadUrl(), file.getOriginalName());
   }
 
 }
