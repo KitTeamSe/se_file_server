@@ -45,7 +45,7 @@ public class SeExceptionAdvice {
   @ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
   public ResponseEntity<ExceptionResponse> handleBindException(final BindException e) {
     this.countExceptionAndLog(e);
-    return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(ExceptionResponse.of(e, "올바르지 않은 입력", e.getBindingResult()), HttpStatus.BAD_REQUEST);
   }
 
   // When method is not allowed
