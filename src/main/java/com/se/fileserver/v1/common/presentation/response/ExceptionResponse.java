@@ -3,9 +3,12 @@ package com.se.fileserver.v1.common.presentation.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import org.springframework.validation.BindingResult;
 
+@Getter
 public class ExceptionResponse {
 
   private String message;
@@ -36,6 +39,12 @@ public class ExceptionResponse {
     return exceptionResponse;
   }
 
+  public static ExceptionResponse of(Exception e, String message, BindingResult bindingResult) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(e, getFieldErrors(bindingResult));
+    exceptionResponse.message = message;
+    return exceptionResponse;
+  }
+
   private List<FieldError> initErrors(List<FieldError> errors) {
     return (errors == null) ? new ArrayList<>() : errors;
   }
@@ -44,7 +53,10 @@ public class ExceptionResponse {
     final List<org.springframework.validation.FieldError> errors = bindingResult.getFieldErrors();
     return errors.parallelStream()
         .map(error ->
-            new FieldError(error.getField(), (String) error.getRejectedValue(), error.getDefaultMessage()))
+            new FieldError(
+                error.getField(),
+                Objects.requireNonNull(error.getRejectedValue()).toString(),
+                error.getDefaultMessage()))
         .collect(Collectors.toList());
   }
 
