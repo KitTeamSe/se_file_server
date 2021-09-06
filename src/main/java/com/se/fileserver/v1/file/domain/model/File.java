@@ -31,7 +31,7 @@ public class File extends BaseEntity {
   @Column(nullable = false)
   private String service;
 
-  @Size(min = 2, max = 40)
+  @Size(min = 2, max = 255)
   @Column(nullable = false)
   private String fileType;
 
