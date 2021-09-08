@@ -11,6 +11,7 @@ public class FileUploadDto {
 
   private String downloadUrl;
   private String originalName;
+  //
 
   public FileUploadDto(String downloadUrl, String originalName) {
     this.downloadUrl = downloadUrl;
