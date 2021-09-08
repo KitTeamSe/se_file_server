@@ -11,14 +11,16 @@ public class FileUploadDto {
 
   private String downloadUrl;
   private String originalName;
+  private Long fileSize;
 
-  public FileUploadDto(String downloadUrl, String originalName) {
+  public FileUploadDto(String downloadUrl, String originalName, Long fileSize) {
     this.downloadUrl = downloadUrl;
     this.originalName = originalName;
+    this.fileSize = fileSize;
   }
 
   public static FileUploadDto of(File file) {
-    return new FileUploadDto(file.getDownloadUrl(), file.getOriginalName());
+    return new FileUploadDto(file.getDownloadUrl(), file.getOriginalName(), file.getSize());
   }
 
 }
