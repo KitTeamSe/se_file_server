@@ -21,7 +21,8 @@ public class CorsHeaderFilter {
     config.setAllowCredentials(true);
     config.addAllowedOrigin("http://localhost:3000");
     config.addAllowedOrigin("https://localhost:3000");
-    config.addAllowedOrigin(fileDashServerDomain);
+    config.addAllowedOrigin("https://filetest.se-testboard.duckdns.org");
+    config.addAllowedOrigin("");
     config.addAllowedHeader("*");
     config.addAllowedMethod("*");
     source.registerCorsConfiguration("/**", config);
