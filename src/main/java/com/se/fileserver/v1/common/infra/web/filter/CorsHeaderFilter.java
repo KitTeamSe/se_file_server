@@ -11,6 +11,9 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class CorsHeaderFilter {
 
+  @Value("${se-file-server.domain}")
+  private String fileServerDomain;
+
   @Value("${se-web-server.file-dash-server-domain}")
   private String fileDashServerDomain;
 
@@ -20,9 +23,8 @@ public class CorsHeaderFilter {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
     config.addAllowedOrigin("http://localhost:3000");
-    config.addAllowedOrigin("https://localhost:3000");
-    config.addAllowedOrigin("https://filetest.se-testboard.duckdns.org");
-    config.addAllowedOrigin("");
+    config.addAllowedOrigin(fileServerDomain);
+    config.addAllowedOrigin(fileDashServerDomain);
     config.addAllowedHeader("*");
     config.addAllowedMethod("*");
     source.registerCorsConfiguration("/**", config);
