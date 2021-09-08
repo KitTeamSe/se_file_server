@@ -11,6 +11,8 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class CorsHeaderFilter {
 
+  // drone test
+
   @Value("${se-file-server.domain}")
   private String fileServerDomain;
 
