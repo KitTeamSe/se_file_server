@@ -1,13 +1,15 @@
 package com.se.fileserver.v1.file.application.dto;
 
 import com.se.fileserver.v1.file.domain.model.File;
+import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FileReadDto {
 
   private Long fileId;
@@ -18,8 +20,12 @@ public class FileReadDto {
   private String saveName;
   private Long size;
 
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
+
   public FileReadDto(Long fileId, String downloadUrl, String service, String fileType,
-      String originalName, String saveName, Long size) {
+      String originalName, String saveName, Long size, LocalDateTime createdAt,
+      LocalDateTime updatedAt) {
     this.fileId = fileId;
     this.downloadUrl = downloadUrl;
     this.service = service;
@@ -27,6 +33,8 @@ public class FileReadDto {
     this.originalName = originalName;
     this.saveName = saveName;
     this.size = size;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   public static FileReadDto to(File file) {
@@ -39,6 +47,8 @@ public class FileReadDto {
         .saveName(file.getSaveName())
         .size(file.getSize())
 
+        .createdAt(file.getCreatedAt())
+        .updatedAt(file.getUpdatedAt())
         .build();
   }
 }

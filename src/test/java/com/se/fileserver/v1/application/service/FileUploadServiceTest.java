@@ -3,6 +3,7 @@ package com.se.fileserver.v1.application.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -62,7 +63,7 @@ public class FileUploadServiceTest {
     MockMultipartFile mockMultipartFile = createMockMultipartFile("fileName", 1L);
     String service = "service";
 
-    when(fileRepository.save(mockFile)).thenReturn(mockFile);
+    when(fileRepository.save(any(File.class))).thenReturn(mockFile);
     when(fileRepository.findBySaveName(anyString())).thenReturn(Optional.ofNullable(null));
 
     //when
@@ -86,7 +87,7 @@ public class FileUploadServiceTest {
 
     String service = "service";
 
-    when(fileRepository.saveAll(mockFileList)).thenReturn(mockFileList);
+    when(fileRepository.saveAll(any(List.class))).thenReturn(mockFileList);
     when(fileRepository.findBySaveName(anyString())).thenReturn(Optional.ofNullable(null));
 
     //when
