@@ -74,6 +74,23 @@ public class FileUploadServiceTest {
   }
 
   @Test
+  public void 허용하지_않는_확장자명_포함() {
+    //given
+    ReflectionTestUtils.setField(fileUploadService,"uploadDir",Paths.get(TEST_DIR));
+
+    File mockFile = mock(File.class);
+    MockMultipartFile mockMultipartFile = createMockMultipartFile("fileName.jsp", 1L);
+    String service = "service";
+
+    // when
+    InvalidFileException exception
+        = assertThrows(InvalidFileException.class, () -> fileUploadService.uploadOne(mockMultipartFile, service));
+
+    // then
+    assertEquals("해당 파일 업로드를 허용하지 않습니다.", exception.getMessage());
+  }
+
+  @Test
   public void 다중_파일_업로드_성공() throws Exception{
     //given
     ReflectionTestUtils.setField(fileUploadService,"uploadDir",Paths.get(TEST_DIR));

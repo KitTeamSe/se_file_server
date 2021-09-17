@@ -137,14 +137,15 @@ public class FileUploadService {
     String[] extensions = fileName.split("\\.");
     String regExp
         = "^(?i)(php|php3|php4|php5|php7|pht|phtml|htm|html|inc|"
-        + "asp|aspx|asa"
-        + "jsp|jspx|jsw|jsv|jspf|war"
+        + "asp|aspx|asa|"
+        + "jsp|jspx|jsw|jsv|jspf|war|"
         + "pl|pm|cgi|lib|"
         + "cfm|cfml|cfc|dbm|"
         + "ese|bat|vbs|dll)$";
 
     for (int i = 0; i < extensions.length; i++) {
       String extension = extensions[i];
+      System.out.println(extension);
       if (i == 0 && extension.charAt(0) != '.') {
         continue;
       }
