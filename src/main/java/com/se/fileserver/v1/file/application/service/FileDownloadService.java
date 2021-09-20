@@ -2,6 +2,7 @@ package com.se.fileserver.v1.file.application.service;
 
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
+import com.se.fileserver.v1.file.application.service.exception.InvalidFileException;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
 import java.net.MalformedURLException;
@@ -43,6 +44,7 @@ public class FileDownloadService {
 
   public FileDownloadDto downloadFile(String saveName) {
     checkFileLocationExists();
+    checkSaveName(saveName);
 
     File file = fileRepositoryProtocol.findBySaveName(saveName)
         .orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
@@ -71,5 +73,13 @@ public class FileDownloadService {
     if (!Files.exists(this.fileLocation)) {
       throw new NotFoundException("존재하지 않는 파일 경로입니다.");
     }
+  }
+
+  private void checkSaveName(String saveName) {
+    String regExp="(.*)(\\.\\.|/|\\\\)(.*)";
+
+    if (saveName.matches(regExp)) {
+      throw new InvalidFileException("파일 명에 사용할 수 없는 문자가 포함되어 있습니다.");
+   }
   }
 }
