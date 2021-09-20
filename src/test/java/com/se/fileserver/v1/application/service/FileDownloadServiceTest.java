@@ -3,10 +3,13 @@ package com.se.fileserver.v1.application.service;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
+
 import com.se.fileserver.v1.common.domain.exception.NotFoundException;
 import com.se.fileserver.v1.file.application.dto.FileDownloadDto;
 import com.se.fileserver.v1.file.application.service.FileDownloadService;
+import com.se.fileserver.v1.file.application.service.exception.InvalidFileException;
 import com.se.fileserver.v1.file.domain.model.File;
 import com.se.fileserver.v1.file.domain.repository.FileRepositoryProtocol;
 import java.io.FileInputStream;
@@ -86,7 +89,8 @@ public class FileDownloadServiceTest {
     String service = "se";
     String originalName = "페페.jpg";
     setUp(saveName, service, originalName);
-    File file = fileRepositoryProtocol.findBySaveName(saveName).orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
+    File file = fileRepositoryProtocol.findBySaveName(saveName)
+        .orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
     Path filePath = Paths.get(directory).resolve(file.getService()).resolve(saveName);
     Resource resource = new UrlResource(filePath.toUri());
 
@@ -111,7 +115,8 @@ public class FileDownloadServiceTest {
     String originalFileName = "한글.hwp";
     String saveName = "han.hwp";
     setUp(saveName, service, originalFileName);
-    File file = fileRepositoryProtocol.findBySaveName(saveName).orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
+    File file = fileRepositoryProtocol.findBySaveName(saveName)
+        .orElseThrow(() -> new NotFoundException("존재하지 않는 파일입니다."));
     Path filePath = Paths.get(directory).resolve(file.getService()).resolve(saveName);
     Resource resource = new UrlResource(filePath.toUri());
 
@@ -131,23 +136,21 @@ public class FileDownloadServiceTest {
   @Test
   void 존재하지_않는_파일() throws IOException {
     // given
-    fileDownloadService = new FileDownloadService(directory, fileRepositoryProtocol);
-    String notExistentSaveName = "pepe2.jpg";
-    String saveName = "pepe.jpg";
     String service = "se";
-    String originalName = "페페.jpg";
-    setUp(saveName, service, originalName);
-    FileDownloadDto fileDownloadDto = null;
+    String originalFileName = "한글.hwp";
+    String saveName = "han.hwp";
+    setUp(saveName, service, originalFileName);
+    String notExistentSaveName = "pepe2.jpg";
 
-    try {
-      // when
-      fileDownloadDto = fileDownloadService.downloadFile(notExistentSaveName);
-    } catch (NotFoundException e) {
-      // then
-      assertThat(e.getMessage(), is("존재하지 않는 파일입니다."));
-    }
+    fileDownloadService = new FileDownloadService(directory, fileRepositoryProtocol);
+    given(fileRepositoryProtocol.findBySaveName(notExistentSaveName))
+        .willThrow(new NotFoundException("존재하지 않는 파일입니다."));
 
-    assertThat(fileDownloadDto, is(nullValue()));
+    // when
+    NotFoundException notFoundException = assertThrows(NotFoundException.class,
+        () -> fileDownloadService.downloadFile(notExistentSaveName));
+    // then
+    assertThat(notFoundException.getMessage(), is("존재하지 않는 파일입니다."));
     close();
   }
 
@@ -157,17 +160,13 @@ public class FileDownloadServiceTest {
     String notExistentDirectory = "C:/Users/NotExistent";
     fileDownloadService = new FileDownloadService(notExistentDirectory, fileRepositoryProtocol);
     String saveName = "pepe2.png";
-    FileDownloadDto fileDownloadDto = null;
 
-    try {
-      // when
-      fileDownloadDto = fileDownloadService.downloadFile(saveName);
-    } catch (NotFoundException e) {
-      // then
-      assertThat(e.getMessage(), is("존재하지 않는 파일 경로입니다."));
-    }
+    // when
+    NotFoundException notFoundException
+        = assertThrows(NotFoundException.class, () -> fileDownloadService.downloadFile(saveName));
 
-    assertThat(fileDownloadDto, is(nullValue()));
+    // then
+    assertThat(notFoundException.getMessage(), is("존재하지 않는 파일 경로입니다."));
   }
 
   @Test
@@ -180,14 +179,27 @@ public class FileDownloadServiceTest {
     setUp(saveName, service, originalName);
     FileDownloadDto fileDownloadDto = null;
 
-    try {
-      // when
-      fileDownloadDto = fileDownloadService.downloadFile(saveName);
-    } catch (NotFoundException e) {
-      // then
-      assertThat(e.getMessage(), is("존재하지 않는 리소스입니다."));
-    }
+    // when
+    NotFoundException notFoundException
+        = assertThrows(NotFoundException.class, () -> fileDownloadService.downloadFile(saveName));
+    // then
+    assertThat(notFoundException.getMessage(), is("존재하지 않는 리소스입니다."));
 
     assertThat(fileDownloadDto, is(nullValue()));
+  }
+
+  @Test
+  void 파일_명에_사용할_수_없는_문자_포함() {
+    // given
+    fileDownloadService = new FileDownloadService("", fileRepositoryProtocol);
+    String saveName = "..test.txt";
+
+    // when
+    InvalidFileException invalidFileException
+        = assertThrows(InvalidFileException.class,
+        () -> fileDownloadService.downloadFile(saveName));
+
+    // then
+    assertThat(invalidFileException.getMessage(), is("파일 명에 사용할 수 없는 문자가 포함되어 있습니다."));
   }
 }
