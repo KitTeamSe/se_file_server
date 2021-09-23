@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FilenameUtils;
@@ -113,10 +114,15 @@ public class FileUploadService {
       throw new InvalidFileException("파일을 가져오지 못하였습니다.");
     }
 
-    String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+    String fileName = StringUtils.cleanPath(
+        Objects.requireNonNull(multipartFile.getOriginalFilename()));
 
     if (fileName.contains("..")) {
       throw new InvalidFileException("파일명에 [..]가 존재합니다 : " + fileName);
+    }
+
+    if (!isValidExtension(fileName)) {
+      throw new InvalidFileException("해당 파일 업로드를 허용하지 않습니다.");
     }
 
     if (multipartFile.getSize() <= 0) {
@@ -126,6 +132,40 @@ public class FileUploadService {
     if (multipartFile.getSize() >= maxFileSize) {
       throw new AttachmentTooLargeException("파일 크기가 " + maxFileSize + "를 초과합니다 : " + fileName);
     }
+  }
+
+  /* 확장자 필터링 */
+  private boolean isValidExtension(String fileName) {
+    if (fileName == null || fileName.length() == 0) {
+      return false;
+    }
+
+    String[] extensions = fileName.split("\\.");
+    String regExp
+        = "^(?i)(php|php3|php4|php5|php7|pht|phtml|htm|html|inc|"
+        + "asp|aspx|asa|"
+        + "jsp|jspx|jsw|jsv|jspf|war|"
+        + "pl|pm|cgi|lib|"
+        + "cfm|cfml|cfc|dbm|"
+        + "ese|bat|vbs|dll)$";
+
+    for (int i = 0; i < extensions.length; i++) {
+      String extension = extensions[i];
+      if (i == 0 && extension.length() == 0) {
+        continue;
+      }
+      if (extension.matches(regExp) || hasSpecialCharacter(extension)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /* 확장자 내 특수문자 필터링 */
+  private boolean hasSpecialCharacter(String extension) {
+    String regExp = "(.*)[%;](.*)";
+    return extension.matches(regExp);
   }
 
   /* 서버에 저장될 파일명 검증 */
