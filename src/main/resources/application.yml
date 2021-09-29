@@ -39,6 +39,8 @@ spring:
     header: X-AUTH-TOKEN
 
 logging:
+  file:
+    path: ./logs
   level:
     org:
       hibernate: info
