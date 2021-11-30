@@ -39,6 +39,9 @@ public class FileUploadService {
   @Value("${se-file-server.upload-dir}")
   private Path uploadDir;
 
+  @Value("${se-file-server.scheme}")
+  private String scheme;
+
   /* 단일, 다중 */
   @Transactional
   public List<FileUploadDto> upload(List<MultipartFile> multipartFiles, String service) {
@@ -181,6 +184,7 @@ public class FileUploadService {
   /* DownloadUrl 생성 */
   private String createDownloadUrl(String saveName) {
     return ServletUriComponentsBuilder.fromCurrentContextPath()
+        .scheme(scheme)
         .path("/file-server/")
         .path("/v1/")
         .path("/file/")
